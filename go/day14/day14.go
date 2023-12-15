@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+//
+// https://adventofcode.com/2023/day/14
+//
+
 func Part1() {
 	fmt.Println("[ Day 14 Part 1 ]")
 

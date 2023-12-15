@@ -4,6 +4,11 @@
 
 #include "day06.h"
 
+struct Race {
+    double time;
+    double distance;
+};
+
 //
 // https://adventofcode.com/2023/day/6
 //

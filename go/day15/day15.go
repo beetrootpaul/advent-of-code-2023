@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+//
+// https://adventofcode.com/2023/day/15
+//
+
 func Part1() {
 	fmt.Println("[ Day 15 Part 1 ]")
 
