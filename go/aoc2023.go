@@ -18,6 +18,8 @@ func main() {
 		day14.Part2()
 	} else if day == 15 && part == 1 {
 		day15.Part1()
+	} else if day == 15 && part == 2 {
+		day15.Part2()
 	} else {
 		fmt.Printf("\nThere is no code for day %d part %d\n", day, part)
 	}
