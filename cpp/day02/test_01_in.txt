@@ -1,0 +1,18 @@
+Game    4:   13 red   , 13 green , 14 blue
+Game    3:   12 red   , 14 green , 14 blue
+Game    2:   12 red   , 13 green , 15 blue
+Game    1:   12 red   , 13 green , 14 blue
+Game   13:   14 green , 14 blue  , 12 red
+Game   12:   13 green , 15 blue  , 12 red
+Game   11:   13 green , 14 blue  , 13 red
+Game   10:   13 green , 14 blue  , 12 red
+Game  103:   15 blue  , 12 red   , 13 green
+Game  102:   14 blue  , 13 red   , 13 green
+Game  101:   14 blue  , 12 red   , 14 green
+Game  100:   14 blue  , 12 red   , 13 green
+Game  1003:  12 red   , 13 green , 14 blue  ; 13 red ; 13 green ; 14 blue
+Game  1002:  12 red   , 13 green , 14 blue  ; 12 red ; 14 green ; 14 blue
+Game  1001:  12 red   , 13 green , 14 blue  ; 12 red ; 13 green ; 15 blue
+Game  1000:  12 red   , 13 green , 14 blue  ; 12 red ; 13 green ; 14 blue
+Game 10000: 12 red, 13 green, 14 blue; 12 red, 13 green, 14 blue; 12 red, 13 green, 14 blue
+Game 20000: 12 red

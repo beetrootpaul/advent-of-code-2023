@@ -1,32 +1,10 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# proprietary AoC test data
+example*_in.txt
+example*_out.txt
+puzzle*_in.txt
+puzzle*_out.txt
+# and its related Unity metadata files, so we won't end up with metadata without the actucal content
+/unity/**/example*_in.txt.meta
+/unity/**/example*_out.txt.meta
+/unity/**/puzzle*_in.txt.meta
+/unity/**/puzzle*_out.txt.meta

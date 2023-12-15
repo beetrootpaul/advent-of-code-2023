@@ -1,0 +1,6 @@
+#ifndef ADVENT_OF_CODE_2023_DAY03_H
+#define ADVENT_OF_CODE_2023_DAY03_H
+
+void day03Part1();
+
+#endif //ADVENT_OF_CODE_2023_DAY03_H
