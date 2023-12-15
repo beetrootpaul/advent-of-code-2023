@@ -10,11 +10,8 @@ import (
 func Part1() {
 	fmt.Println("[ Day 14 Part 1 ]")
 
-	//filename := "day14/example1_in.txt"
-	filename := "day14/puzzle1_in.txt"
-
-	fmt.Println("\nParsing file", filename, "...")
-	platform, failure := parseFile(filename)
+	fmt.Println("\nParsing stdin...")
+	platform, failure := parseFile()
 	if failure {
 		return
 	}
@@ -37,11 +34,8 @@ func Part1() {
 func Part2() {
 	fmt.Println("[ Day 14 Part 2 ]")
 
-	//filename := "day14/example2_in.txt"
-	filename := "day14/puzzle2_in.txt"
-
-	fmt.Println("\nParsing file", filename, "...")
-	platform, failure := parseFile(filename)
+	fmt.Println("\nParsing stdin...")
+	platform, failure := parseFile()
 	if failure {
 		return
 	}
@@ -95,16 +89,9 @@ func Part2() {
 	fmt.Println(totalLoadByCycle[earliestCycleSameAsN])
 }
 
-func parseFile(filename string) ([][]rune, bool) {
-	file, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("Failed to open a file", filename, err)
-		return nil, true
-	}
-	defer file.Close()
-
+func parseFile() ([][]rune, bool) {
+	scanner := bufio.NewScanner(os.Stdin)
 	var platform [][]rune
-	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		platform = append(platform, []rune(scanner.Text()))
 	}
