@@ -90,8 +90,9 @@ func Part2() {
 }
 
 func parseFile() ([][]rune, bool) {
-	scanner := bufio.NewScanner(os.Stdin)
 	var platform [][]rune
+
+	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		platform = append(platform, []rune(scanner.Text()))
 	}
