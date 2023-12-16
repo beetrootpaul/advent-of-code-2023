@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://b764guoprte6r"]
+
+[sub_resource type="Theme" id="Theme_g0eul"]
+default_font_size = 48
+
+[node name="Day16Part1" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+offset_right = 360.0
+offset_bottom = 67.0
+size_flags_vertical = 1
+theme = SubResource("Theme_g0eul")
+text = "[ Day 16 Part 1 ]"
+
+[node name="Label" type="Label" parent="Label"]
+offset_right = 360.0
+offset_bottom = 67.0
+size_flags_vertical = 1
+theme = SubResource("Theme_g0eul")
+text = "[ Day 16 Part 1 ]"
