@@ -1,19 +1,22 @@
 using UnityEngine;
 
-public class AdjustTextWidthToFitCamera : MonoBehaviour
+namespace aoc2023
 {
-    private Camera _mainCamera;
-
-    private void Start()
+    public class AdjustTextWidthToFitCamera : MonoBehaviour
     {
-        _mainCamera = Camera.main;
-    }
+        private Camera _mainCamera;
 
-    private void Update()
-    {
-        if (TryGetComponent<RectTransform>(out var rectTransform))
+        private void Start()
         {
-            rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _mainCamera.pixelWidth);
+            _mainCamera = Camera.main;
+        }
+
+        private void Update()
+        {
+            if (TryGetComponent<RectTransform>(out var rectTransform))
+            {
+                rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _mainCamera.pixelWidth);
+            }
         }
     }
 }
