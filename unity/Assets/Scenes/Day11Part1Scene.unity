@@ -914,7 +914,7 @@ MonoBehaviour:
   tileStarPrefab: {fileID: 8531194452530169566, guid: c757a25d1dba549d585f8f33289131a3, type: 3}
   nextButton: {fileID: 980241247}
   parentForInstantiatedTiles: {fileID: 40485020}
-  inputFile: 1
+  inputFile: 0
 --- !u!1 &1122081740
 GameObject:
   m_ObjectHideFlags: 0

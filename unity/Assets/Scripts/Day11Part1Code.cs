@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -52,8 +53,6 @@ namespace aoc2023
 
         [SerializeField]
         private Input inputFile;
-
-        private bool _finished;
 
         private Camera _camera;
 
@@ -132,12 +131,7 @@ namespace aoc2023
             }
         }
 
-        private void OnApplicationQuit()
-        {
-            _finished = true;
-        }
-
-        private async Task InitFor(string file)
+        private async UniTask InitFor(string file)
         {
             string[] lines;
             try
@@ -177,7 +171,7 @@ namespace aoc2023
             }
         }
 
-        private async Task InstantiateTiles()
+        private async UniTask InstantiateTiles()
         {
             var scale = new Vector2(
                 Math.Min(7f / _size.y, 7f / _size.x),
@@ -190,7 +184,9 @@ namespace aoc2023
                 _tiles.Add(new List<Tile>());
                 for (var col = 0; col < _size.x; col++)
                 {
-                    destroyCancellationToken.ThrowIfCancellationRequested();
+                    // This line is no longer needed since we moved from Task to 3rd party UniTask:
+                    // destroyCancellationToken.ThrowIfCancellationRequested();
+                    
                     var tile = Instantiate(
                         _imageData[row][col] == '#' ? tileStarPrefab : tilePrefab,
                         _camera.ViewportToWorldPoint(
@@ -208,11 +204,11 @@ namespace aoc2023
 
                     tile.Appear(500);
 
-                    // await Task.Delay(20);
+                    // await UniTask.Delay(TimeSpan.FromSeconds(0.02));
                 }
             }
 
-            await Task.Delay(500);
+            await UniTask.Delay(TimeSpan.FromSeconds(0.5));
         }
 
         private void MarkEmptyRowsAndCols()
@@ -233,7 +229,7 @@ namespace aoc2023
             }
         }
 
-        private async Task ExpandEmptyRowsAndCols()
+        private async UniTask ExpandEmptyRowsAndCols()
         {
             for (var col = _size.x - 1; col >= 0; col--)
             {
@@ -263,7 +259,7 @@ namespace aoc2023
             await InstantiateTiles();
         }
 
-        private async Task<List<int>> CalculateShortestPaths()
+        private async UniTask<List<int>> CalculateShortestPaths()
         {
             var shortestPaths = new List<int>();
 
@@ -284,7 +280,7 @@ namespace aoc2023
                             }
                         }
                     }
-                    await Task.Yield();
+                    await UniTask.Yield();
                 }
             }
 
