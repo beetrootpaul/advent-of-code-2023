@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -58,8 +60,8 @@ namespace aoc2023
 
         private async void Start()
         {
-            resultText.text = "...";
-
+            resultText.text = "parsing...";
+            print("=== PARSE ===");
             var (workflows, ratings) = await Parse(inputFile switch
             {
                 Input.Example1 => "day19/example1_in.txt",
@@ -78,6 +80,23 @@ namespace aoc2023
             {
                 print($"RATING: x={rating.X},m={rating.M},a={rating.A},s={rating.S}");
             }
+
+            resultText.text = "computing...";
+            print("=== COMPUTE ===");
+            var acceptedRatings =
+                ratings.ToUniTaskAsyncEnumerable()
+                    .WhereAwait(async rating => await IsAccepted(rating, workflows, "in"));
+            await foreach (var ar in acceptedRatings)
+            {
+                print($"ACCEPTED: {ar.X}");
+            }
+
+            resultText.text = "preparing an answer...";
+            print("=== SUM ===");
+            var sum = await acceptedRatings.Select(rating => rating.X + rating.M + rating.A + rating.S).SumAsync();
+            print($"SUM: {sum}");
+            resultText.text = $"{sum}";
+            
         }
 
         private async UniTask<(
@@ -220,6 +239,23 @@ namespace aoc2023
             }
 
             return (workflows, ratings);
+        }
+
+        private async UniTask<bool> IsAccepted(Rating rating, Dictionary<string, List<Step>> workflows,
+            string currentWorkflowId)
+        {
+            if (!workflows.TryGetValue(currentWorkflowId, out var steps)) return false;
+
+            var matchingStep = steps.Find(step => step.Condition(rating));
+            if (matchingStep.IsAccepted)
+            {
+                return true;
+            }
+            if (matchingStep.IsRejected)
+            {
+                return false;
+            }
+            return await IsAccepted(rating, workflows, matchingStep.NextWorkflowId);
         }
     }
 }

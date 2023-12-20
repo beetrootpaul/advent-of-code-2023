@@ -654,7 +654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resultText: {fileID: 48592940}
-  inputFile: 0
+  inputFile: 1
 --- !u!1 &1122081740
 GameObject:
   m_ObjectHideFlags: 0
