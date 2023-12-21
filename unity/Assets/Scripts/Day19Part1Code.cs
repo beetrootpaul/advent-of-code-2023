@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Linq;
 using TMPro;
@@ -53,7 +52,7 @@ namespace aoc2023
         }
 
         [SerializeField]
-        private TextMeshProUGUI resultText;
+        private TextMeshProUGUI? resultText;
 
         [SerializeField]
         private Input inputFile;
@@ -96,7 +95,6 @@ namespace aoc2023
             var sum = await acceptedRatings.Select(rating => rating.X + rating.M + rating.A + rating.S).SumAsync();
             print($"SUM: {sum}");
             resultText.text = $"{sum}";
-            
         }
 
         private async UniTask<(

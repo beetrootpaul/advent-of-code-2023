@@ -22,10 +22,10 @@ namespace aoc2023
         }
 
         [SerializeReference]
-        private TextMeshProUGUI resultText;
+        private TextMeshProUGUI? resultText;
 
         [SerializeReference]
-        private TextMeshProUGUI progressText;
+        private TextMeshProUGUI? progressText;
 
         [SerializeField]
         private Input inputFile;

@@ -39,24 +39,24 @@ namespace aoc2023
         }
 
         [SerializeField]
-        private TextMeshProUGUI resultText;
+        private TextMeshProUGUI? resultText;
 
         [FormerlySerializedAs("tileEmptyPrefab")]
         [SerializeField]
-        private Tile tilePrefab;
+        private Tile? tilePrefab;
         [SerializeField]
-        private Tile tileStarPrefab;
+        private Tile? tileStarPrefab;
         [SerializeField]
-        private Button nextButton;
+        private Button? nextButton;
         [SerializeField]
-        private Transform parentForInstantiatedTiles;
+        private Transform? parentForInstantiatedTiles;
 
         [SerializeField]
         private Input inputFile;
 
-        private Camera _camera;
+        private Camera? _camera;
 
-        private List<StringBuilder> _imageData;
+        private List<StringBuilder> _imageData = new();
         private readonly List<List<Tile>> _tiles = new();
         private Vector2Int _size;
         private readonly ICollection<int> _emptyRows = new HashSet<int>();
