@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace aoc2023
+namespace aoc2023.Scripts
 {
     public class AdjustTextWidthToFitCamera : MonoBehaviour
     {

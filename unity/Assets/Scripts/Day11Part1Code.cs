@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace aoc2023
+namespace aoc2023.Scripts
 {
     //
     // https://adventofcode.com/2023/day/11
