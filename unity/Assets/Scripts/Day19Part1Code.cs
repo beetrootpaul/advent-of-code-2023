@@ -59,6 +59,8 @@ namespace aoc2023.Scripts
 
         private async void Start()
         {
+            if (resultText == null) throw new Exception($"null {nameof(resultText)}");
+
             resultText.text = "parsing...";
             print("=== PARSE ===");
             var (workflows, ratings) = await Parse(inputFile switch

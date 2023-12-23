@@ -68,7 +68,6 @@ namespace aoc2023.Scripts
             _finished = true;
         }
 
-
         private async Task<long> CalculateFor(string file)
         {
             //
@@ -200,20 +199,7 @@ namespace aoc2023.Scripts
                 Debug.LogWarning($"Reached limit of {limit} iterations");
             }
 
-            if (i % 100 == 0)
-            {
-                await UnblockAndCheckIfCancelled();
-            }
-
             return length;
-        }
-
-        private async Task UnblockAndCheckIfCancelled()
-        {
-            destroyCancellationToken.ThrowIfCancellationRequested();
-
-            // unblock the execution by yielding
-            await Task.Yield();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using TMPro;
@@ -64,6 +65,7 @@ namespace aoc2023.Scripts
 
         private State _state = State.Init;
 
+        private readonly CancellationTokenSource _destroyCancellationTokenSource = new();
 
         private async void Start()
         {
@@ -89,6 +91,12 @@ namespace aoc2023.Scripts
         private void OnDisable()
         {
             nextButton.onClick.RemoveListener(ProceedToNextState);
+        }
+
+        private void OnApplicationQuit()
+        {
+            _destroyCancellationTokenSource.Cancel();
+            _destroyCancellationTokenSource.Dispose();
         }
 
         private void ProceedToNextState()
@@ -136,7 +144,10 @@ namespace aoc2023.Scripts
             string[] lines;
             try
             {
-                lines = await File.ReadAllLinesAsync($"{Application.streamingAssetsPath}/{file}");
+                lines = await File.ReadAllLinesAsync(
+                    $"{Application.streamingAssetsPath}/{file}",
+                    _destroyCancellationTokenSource.Token
+                );
             }
             catch
             {
@@ -186,7 +197,7 @@ namespace aoc2023.Scripts
                 {
                     // This line is no longer needed since we moved from Task to 3rd party UniTask:
                     // destroyCancellationToken.ThrowIfCancellationRequested();
-                    
+
                     var tile = Instantiate(
                         _imageData[row][col] == '#' ? tileStarPrefab : tilePrefab,
                         _camera.ViewportToWorldPoint(
@@ -268,7 +279,8 @@ namespace aoc2023.Scripts
                 for (var col = 0; col < _size.x; col++)
                 {
                     if (_imageData[row][col] != '#') continue;
-                    destroyCancellationToken.ThrowIfCancellationRequested();
+
+                    _destroyCancellationTokenSource.Token.ThrowIfCancellationRequested();
                     for (var row2 = row; row2 < _size.y; row2++)
                     {
                         for (var col2 = 0; col2 < _size.x; col2++)

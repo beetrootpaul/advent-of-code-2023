@@ -105,21 +105,12 @@ namespace aoc2023.Scripts
                 if (i % 1000 == 0)
                 {
                     Debug.Log($"Processed step: {steps}");
-                    await UnblockAndCheckIfCancelled();
                 }
 
                 steps++;
             }
 
             return steps;
-        }
-
-        private async Task UnblockAndCheckIfCancelled()
-        {
-            destroyCancellationToken.ThrowIfCancellationRequested();
-
-            // unblock the execution by yielding
-            await Task.Yield();
         }
     }
 }

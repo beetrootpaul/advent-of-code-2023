@@ -64,7 +64,6 @@ namespace aoc2023.Scripts
             _finished = true;
         }
 
-
         private async Task<long> CalculateFor(string file)
         {
             InitPascalTriangle();
@@ -88,8 +87,6 @@ namespace aoc2023.Scripts
                 var extrapolatedValue = ExtrapolateNextValue(values);
                 Debug.Log($"NEXT: {extrapolatedValue}");
                 sumOfExtrapolatedValues += extrapolatedValue;
-
-                await UnblockAndCheckIfCancelled();
             }
 
             return sumOfExtrapolatedValues;
@@ -135,14 +132,6 @@ namespace aoc2023.Scripts
             }
 
             return nextValue;
-        }
-
-        private async Task UnblockAndCheckIfCancelled()
-        {
-            destroyCancellationToken.ThrowIfCancellationRequested();
-
-            // unblock the execution by yielding
-            await Task.Yield();
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace aoc2023.Scripts
         private Input inputFile;
 
         private bool _finished;
+        private readonly CancellationTokenSource _destroyCancellationTokenSource = new();
 
         private async void Start()
         {
@@ -58,6 +60,8 @@ namespace aoc2023.Scripts
         private void OnApplicationQuit()
         {
             _finished = true;
+            _destroyCancellationTokenSource.Cancel();
+            _destroyCancellationTokenSource.Dispose();
         }
 
         private async Task<long> CalculateFor(string file)
@@ -65,7 +69,10 @@ namespace aoc2023.Scripts
             string[] lines;
             try
             {
-                lines = await File.ReadAllLinesAsync($"{Application.streamingAssetsPath}/{file}");
+                lines = await File.ReadAllLinesAsync(
+                    $"{Application.streamingAssetsPath}/{file}",
+                    _destroyCancellationTokenSource.Token
+                );
             }
             catch
             {
@@ -120,7 +127,7 @@ namespace aoc2023.Scripts
 
         private async Task UnblockAndCheckIfCancelled()
         {
-            destroyCancellationToken.ThrowIfCancellationRequested();
+            _destroyCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
             // unblock the execution by yielding
             await Task.Yield();
