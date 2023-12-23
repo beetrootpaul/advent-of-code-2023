@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace aoc2023.Scripts
+namespace aoc2023.Day11
 {
     public class Tile : MonoBehaviour
     {

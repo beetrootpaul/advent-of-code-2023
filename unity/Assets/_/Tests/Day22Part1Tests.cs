@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using aoc2023.Scripts;
 using NUnit.Framework;
 using static UnityEngine.Application;
 
-namespace aoc2023.Tests
+namespace aoc2023.Day22
 {
     public class Day22Part1Tests
     {

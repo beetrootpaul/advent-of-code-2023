@@ -6,7 +6,7 @@ using Cysharp.Threading.Tasks.Linq;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.Scripts
+namespace aoc2023
 {
     internal struct Rating
     {

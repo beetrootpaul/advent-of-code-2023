@@ -11,7 +11,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace aoc2023.Scripts
+namespace aoc2023.Day11
 {
     //
     // https://adventofcode.com/2023/day/11

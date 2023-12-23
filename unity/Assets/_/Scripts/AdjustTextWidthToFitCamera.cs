@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace aoc2023.Scripts
+namespace aoc2023
 {
     public class AdjustTextWidthToFitCamera : MonoBehaviour
     {
-        private Camera _mainCamera;
+        private Camera? _mainCamera;
 
         private void Start()
         {

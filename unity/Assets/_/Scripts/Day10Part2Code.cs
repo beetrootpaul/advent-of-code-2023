@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.Scripts
+namespace aoc2023
 {
     //
     // https://adventofcode.com/2023/day/10
