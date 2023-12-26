@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -28,88 +29,131 @@ namespace aoc2023
             if (resultText == null) throw new Exception($"null {nameof(resultText)}");
             resultText.text = "...";
 
-            var snapshot = Day22Steps.Step1_Parse(inputFile switch
+            var bricks = Day22Steps.Step1_Parse(inputFile switch
             {
                 Input.Example => "day22/example.txt",
                 Input.Puzzle => "day22/puzzle.txt",
                 _ => "NOT_SET"
             });
-            // TODO: render the snapshot
+            // TODO: render it
 
-            var settled = Day22Steps.Step2_SettleFall(snapshot);
-            // TODO: render the snapshot
+            Day22Steps.Step2_SettleFall(bricks);
+            // TODO: render it
 
-            resultText.text = $"{settled}";
+            Day22Steps.Step3_MarkSafeToDisintegrate(bricks);
+            // TODO: render it
+
+            var result = Day22Steps.Step4_CountSafeToDisintegrate(bricks);
+
+            resultText.text = $"{result}";
         }
     }
 
     internal static class Day22Steps
     {
-        public static SortedSet<Brick> Step1_Parse(string inputFilePath)
+        public static IDictionary<int, Brick> Step1_Parse(string inputFilePath)
         {
             var lines = File.ReadAllLines($"{Application.streamingAssetsPath}/{inputFilePath}");
-            var snapshot = new SortedSet<Brick>(new ByBrickMinZ());
+            var bricks = new Dictionary<int, Brick>();
             foreach (var line in lines)
             {
                 var xyzText1 = line.Split('~')[0];
                 var xyzText2 = line.Split('~')[1];
-                snapshot.Add(new Brick(
+                var nextBrick = new Brick(
                     z1: int.Parse(xyzText1.Split(',')[2]),
                     z2: int.Parse(xyzText2.Split(',')[2])
-                ));
+                );
+                bricks.Add(nextBrick.Id, nextBrick);
             }
-
-            return snapshot;
+            return bricks;
         }
 
-        public static SortedSet<Brick> Step2_SettleFall(SortedSet<Brick> snapshot)
+        public static void Step2_SettleFall(IDictionary<int, Brick> bricks)
         {
-            var settled = new SortedSet<Brick>(new ByBrickMinZ());
-
-            // TODO: honor XY
-            var highestZSoFar = 0;
-            foreach (var brick in snapshot)
+            var highestBrickSoFar = Brick.GroundId;
+            foreach (var brick in bricks.Values.OrderBy(b => b.XyzMin.z))
             {
-                var fallenBrick = brick.FallToZ(highestZSoFar + 1);
-                settled.Add(fallenBrick);
-                highestZSoFar = fallenBrick.XyzMax.z;
+                if (highestBrickSoFar == Brick.GroundId)
+                {
+                    brick.FallToGround();
+                }
+                else
+                {
+                    brick.FallTo(bricks[highestBrickSoFar]);
+                }
+                highestBrickSoFar = brick.Id;
             }
+        }
 
-            return settled;
+        // TODO: honor XY
+        public static void Step3_MarkSafeToDisintegrate(IDictionary<int, Brick> bricks)
+        {
+            foreach (var brick in bricks.Values)
+            {
+                brick.SafeToDisintegrate = brick.SupportedBricks.All(topBrickId =>
+                    bricks[topBrickId].SupportingBricks.Count(siblingBrickId =>
+                        siblingBrickId != brick.Id
+                    ) > 0
+                );
+            }
+        }
+
+        public static int Step4_CountSafeToDisintegrate(IDictionary<int, Brick> bricks)
+        {
+            return bricks.Values.Count(b => b.SafeToDisintegrate);
         }
     }
 
-    internal readonly struct Brick
+    internal class Brick
     {
-        public Vector3Int XyzMin { get; }
+        public static int GroundId = 0;
+        private static int _nextId = 1;
 
-        public Vector3Int XyzMax { get; }
+        public int Id { get; }
+        public Vector3Int XyzMin { get; private set; }
+        public Vector3Int XyzMax { get; private set; }
+        public bool SafeToDisintegrate { get; internal set; }
+
+        internal ICollection<int> SupportingBricks = new List<int>();
+        internal ICollection<int> SupportedBricks = new List<int>();
+
+        public Brick(int z1, int z2, bool safeToDisintegrate = false, int id = -1)
+        {
+            Id = id > -1 ? id : _nextId++;
+            XyzMin = new Vector3Int(0, 0, Math.Min(z1, z2));
+            XyzMax = new Vector3Int(0, 0, Math.Max(z1, z2));
+            SafeToDisintegrate = safeToDisintegrate;
+        }
 
         private Vector3Int Size => XyzMax - XyzMin + Vector3Int.one;
 
-        public Brick(int z1, int z2)
+        // TODO: make it mutate the brick itself? 
+        public void FallToGround()
         {
-            XyzMin = new Vector3Int(0, 0, Math.Min(z1, z2));
-            XyzMax = new Vector3Int(0, 0, Math.Max(z1, z2));
+            const int newZMin = 1;
+            XyzMax = new Vector3Int(XyzMax.x, XyzMax.y, newZMin + Size.z - 1);
+            XyzMin = new Vector3Int(XyzMin.x, XyzMin.y, newZMin);
         }
 
-        public Brick FallToZ(int newZMin)
+        public void FallTo(Brick lowerBrick)
         {
-            return new Brick(z1: newZMin, z2: newZMin + Size.z - 1);
+            var newZMin = lowerBrick.XyzMax.z + 1;
+            XyzMax = new Vector3Int(XyzMax.x, XyzMax.y, newZMin + Size.z - 1);
+            XyzMin = new Vector3Int(XyzMin.x, XyzMin.y, newZMin);
+
+            SupportingBricks.Add(lowerBrick.Id);
+            lowerBrick.SupportedBricks.Add(Id);
         }
 
-        public override string ToString()
+        public string Serialized()
         {
-            return $"[ ? , ? , {XyzMin.z}{(Size.z > 1 ? $"_{XyzMax.z}" : "")} ]";
+            var supporting = $"|{string.Join(",", SupportingBricks)}| -> ";
+            var coords = $"[ ? , ? , {XyzMin.z}{(Size.z > 1 ? $"_{XyzMax.z}" : "")} ]";
+            var attributes = $"{(SafeToDisintegrate ? " (X)" : "")}";
+            var supported = $" -> |{string.Join(",", SupportedBricks)}|";
+            return $"{supporting}{coords}{attributes}{supported}";
         }
+
+        public override string ToString() => Serialized();
     };
-
-    internal class ByBrickMinZ : IComparer<Brick>
-    {
-        public int Compare(Brick b1, Brick b2)
-        {
-            if (b1.XyzMin.z != b2.XyzMin.z) return b1.XyzMin.z - b2.XyzMin.z;
-            return 0;
-        }
-    }
 }
