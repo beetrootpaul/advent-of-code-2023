@@ -60,7 +60,9 @@ namespace aoc2023
                 var xyzText1 = line.Split('~')[0];
                 var xyzText2 = line.Split('~')[1];
                 var nextBrick = new Brick(
+                    x1: int.Parse(xyzText1.Split(',')[0]),
                     z1: int.Parse(xyzText1.Split(',')[2]),
+                    x2: int.Parse(xyzText2.Split(',')[0]),
                     z2: int.Parse(xyzText2.Split(',')[2])
                 );
                 bricks.Add(nextBrick.Id, nextBrick);
@@ -70,18 +72,24 @@ namespace aoc2023
 
         public static void Step2_SettleFall(IDictionary<int, Brick> bricks)
         {
-            var highestBrickSoFar = Brick.GroundId;
-            foreach (var brick in bricks.Values.OrderBy(b => b.XyzMin.z))
+            var maxX = bricks.Values.Select(b => b.XyzMax.x).Max();
+            var highestBricksSoFar = Enumerable.Repeat(Brick.Ground, maxX + 1).ToArray();
+            foreach (var current in bricks.Values.OrderBy(b => b.XyzMin.z))
             {
-                if (highestBrickSoFar == Brick.GroundId)
+                var localMaxHeight = 0;
+                for (var x = current.XyzMin.x; x <= current.XyzMax.x; x++)
                 {
-                    brick.FallToGround();
+                    localMaxHeight = Math.Max(localMaxHeight, highestBricksSoFar[x].XyzMax.z);
                 }
-                else
+                current.FallTo(localMaxHeight + 1);
+                for (var x = current.XyzMin.x; x <= current.XyzMax.x; x++)
                 {
-                    brick.FallTo(bricks[highestBrickSoFar]);
+                    if (highestBricksSoFar[x].XyzMax.z == localMaxHeight)
+                    {
+                        current.ConnectAsSupporting(highestBricksSoFar[x]);
+                    }
+                    highestBricksSoFar[x] = current;
                 }
-                highestBrickSoFar = brick.Id;
             }
         }
 
@@ -106,7 +114,8 @@ namespace aoc2023
 
     internal class Brick
     {
-        public static int GroundId = 0;
+        public static readonly Brick Ground = new(x1: 0, z1: 0, x2: 999_999_999, z2: 0);
+
         private static int _nextId = 1;
 
         public int Id { get; }
@@ -114,44 +123,42 @@ namespace aoc2023
         public Vector3Int XyzMax { get; private set; }
         public bool SafeToDisintegrate { get; internal set; }
 
-        internal ICollection<int> SupportingBricks = new List<int>();
-        internal ICollection<int> SupportedBricks = new List<int>();
+        internal readonly ICollection<int> SupportingBricks = new HashSet<int>();
+        internal readonly ICollection<int> SupportedBricks = new HashSet<int>();
 
-        public Brick(int z1, int z2, bool safeToDisintegrate = false, int id = -1)
+        public Brick(int x1, int z1, int x2, int z2, bool safeToDisintegrate = false, int id = -1)
         {
             Id = id > -1 ? id : _nextId++;
-            XyzMin = new Vector3Int(0, 0, Math.Min(z1, z2));
-            XyzMax = new Vector3Int(0, 0, Math.Max(z1, z2));
+            XyzMin = new Vector3Int(Math.Min(x1, x2), 0, Math.Min(z1, z2));
+            XyzMax = new Vector3Int(Math.Max(x1, x2), 0, Math.Max(z1, z2));
             SafeToDisintegrate = safeToDisintegrate;
         }
 
         private Vector3Int Size => XyzMax - XyzMin + Vector3Int.one;
 
-        // TODO: make it mutate the brick itself? 
-        public void FallToGround()
+        public void FallTo(int newZMin)
         {
-            const int newZMin = 1;
             XyzMax = new Vector3Int(XyzMax.x, XyzMax.y, newZMin + Size.z - 1);
             XyzMin = new Vector3Int(XyzMin.x, XyzMin.y, newZMin);
         }
 
-        public void FallTo(Brick lowerBrick)
+        public void ConnectAsSupporting(Brick lowerBrick)
         {
-            var newZMin = lowerBrick.XyzMax.z + 1;
-            XyzMax = new Vector3Int(XyzMax.x, XyzMax.y, newZMin + Size.z - 1);
-            XyzMin = new Vector3Int(XyzMin.x, XyzMin.y, newZMin);
-
             SupportingBricks.Add(lowerBrick.Id);
             lowerBrick.SupportedBricks.Add(Id);
         }
 
         public string Serialized()
         {
-            var supporting = $"|{string.Join(",", SupportingBricks)}| -> ";
-            var coords = $"[ ? , ? , {XyzMin.z}{(Size.z > 1 ? $"_{XyzMax.z}" : "")} ]";
+            var supporting = $"|{string.Join(",", SupportingBricks.OrderBy(id => id))}| -> ";
+            var xCoords = $"{XyzMin.x}{(Size.x > 1 ? $"_{XyzMax.x}" : "")}";
+            var zCoords = $"{XyzMin.z}{(Size.z > 1 ? $"_{XyzMax.z}" : "")}";
+            var id = $"{Id}:";
+            var coords =
+                $"[ {xCoords} , ? , {zCoords} ]";
             var attributes = $"{(SafeToDisintegrate ? " (X)" : "")}";
-            var supported = $" -> |{string.Join(",", SupportedBricks)}|";
-            return $"{supporting}{coords}{attributes}{supported}";
+            var supported = $" -> |{string.Join(",", SupportedBricks.OrderBy(id => id))}|";
+            return $"{supporting}{id}{coords}{attributes}{supported}";
         }
 
         public override string ToString() => Serialized();
