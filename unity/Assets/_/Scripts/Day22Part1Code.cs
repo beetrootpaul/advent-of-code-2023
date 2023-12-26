@@ -61,8 +61,10 @@ namespace aoc2023
                 var xyzText2 = line.Split('~')[1];
                 var nextBrick = new Brick(
                     x1: int.Parse(xyzText1.Split(',')[0]),
+                    y1: int.Parse(xyzText1.Split(',')[1]),
                     z1: int.Parse(xyzText1.Split(',')[2]),
                     x2: int.Parse(xyzText2.Split(',')[0]),
+                    y2: int.Parse(xyzText2.Split(',')[1]),
                     z2: int.Parse(xyzText2.Split(',')[2])
                 );
                 bricks.Add(nextBrick.Id, nextBrick);
@@ -73,27 +75,35 @@ namespace aoc2023
         public static void Step2_SettleFall(IDictionary<int, Brick> bricks)
         {
             var maxX = bricks.Values.Select(b => b.XyzMax.x).Max();
-            var highestBricksSoFar = Enumerable.Repeat(Brick.Ground, maxX + 1).ToArray();
+            var maxY = bricks.Values.Select(b => b.XyzMax.y).Max();
+            var highestBricksSoFar = Enumerable.Range(0, maxX + 1).Select(_ =>
+                Enumerable.Range(0, maxY + 1).Select(_ => Brick.Ground).ToArray()
+            ).ToArray();
             foreach (var current in bricks.Values.OrderBy(b => b.XyzMin.z))
             {
                 var localMaxHeight = 0;
                 for (var x = current.XyzMin.x; x <= current.XyzMax.x; x++)
                 {
-                    localMaxHeight = Math.Max(localMaxHeight, highestBricksSoFar[x].XyzMax.z);
+                    for (var y = current.XyzMin.y; y <= current.XyzMax.y; y++)
+                    {
+                        localMaxHeight = Math.Max(localMaxHeight, highestBricksSoFar[x][y].XyzMax.z);
+                    }
                 }
                 current.FallTo(localMaxHeight + 1);
                 for (var x = current.XyzMin.x; x <= current.XyzMax.x; x++)
                 {
-                    if (highestBricksSoFar[x].XyzMax.z == localMaxHeight)
+                    for (var y = current.XyzMin.y; y <= current.XyzMax.y; y++)
                     {
-                        current.ConnectAsSupporting(highestBricksSoFar[x]);
+                        if (highestBricksSoFar[x][y].XyzMax.z == localMaxHeight)
+                        {
+                            current.ConnectAsSupporting(highestBricksSoFar[x][y]);
+                        }
+                        highestBricksSoFar[x][y] = current;
                     }
-                    highestBricksSoFar[x] = current;
                 }
             }
         }
 
-        // TODO: honor XY
         public static void Step3_MarkSafeToDisintegrate(IDictionary<int, Brick> bricks)
         {
             foreach (var brick in bricks.Values)
@@ -114,7 +124,10 @@ namespace aoc2023
 
     internal class Brick
     {
-        public static readonly Brick Ground = new(x1: 0, z1: 0, x2: 999_999_999, z2: 0);
+        public static readonly Brick Ground = new(
+            x1: -999_999_999, y1: -999_999_999, z1: 0,
+            x2: 999_999_999, y2: 999_999_999, z2: 0
+        );
 
         private static int _nextId = 1;
 
@@ -126,11 +139,11 @@ namespace aoc2023
         internal readonly ICollection<int> SupportingBricks = new HashSet<int>();
         internal readonly ICollection<int> SupportedBricks = new HashSet<int>();
 
-        public Brick(int x1, int z1, int x2, int z2, bool safeToDisintegrate = false, int id = -1)
+        public Brick(int x1, int y1, int z1, int x2, int y2, int z2, bool safeToDisintegrate = false, int id = -1)
         {
             Id = id > -1 ? id : _nextId++;
-            XyzMin = new Vector3Int(Math.Min(x1, x2), 0, Math.Min(z1, z2));
-            XyzMax = new Vector3Int(Math.Max(x1, x2), 0, Math.Max(z1, z2));
+            XyzMin = new Vector3Int(Math.Min(x1, x2), Math.Min(y1, y2), Math.Min(z1, z2));
+            XyzMax = new Vector3Int(Math.Max(x1, x2), Math.Max(y1, y2), Math.Max(z1, z2));
             SafeToDisintegrate = safeToDisintegrate;
         }
 
@@ -152,10 +165,11 @@ namespace aoc2023
         {
             var supporting = $"|{string.Join(",", SupportingBricks.OrderBy(id => id))}| -> ";
             var xCoords = $"{XyzMin.x}{(Size.x > 1 ? $"_{XyzMax.x}" : "")}";
+            var yCoords = $"{XyzMin.y}{(Size.y > 1 ? $"_{XyzMax.y}" : "")}";
             var zCoords = $"{XyzMin.z}{(Size.z > 1 ? $"_{XyzMax.z}" : "")}";
             var id = $"{Id}:";
             var coords =
-                $"[ {xCoords} , ? , {zCoords} ]";
+                $"[ {xCoords} , {yCoords} , {zCoords} ]";
             var attributes = $"{(SafeToDisintegrate ? " (X)" : "")}";
             var supported = $" -> |{string.Join(",", SupportedBricks.OrderBy(id => id))}|";
             return $"{supporting}{id}{coords}{attributes}{supported}";
