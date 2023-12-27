@@ -454,6 +454,30 @@ PrefabInstance:
       propertyPath: regularBrickMaterial
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3646150855518645768, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+      propertyPath: <XyzMax>k__BackingField.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3646150855518645768, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+      propertyPath: <XyzMax>k__BackingField.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3646150855518645768, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+      propertyPath: <XyzMin>k__BackingField.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3646150855518645768, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+      propertyPath: <XyzMin>k__BackingField.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3646150855518645768, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+      propertyPath: <MarkedBrickMaterial>k__BackingField
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3646150855518645768, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+      propertyPath: <RegularBrickMaterial>k__BackingField
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3646150855518645780, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
       propertyPath: m_Name
       value: Ground
@@ -747,10 +771,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6effb62a8dee4eb79263c32d5315bcaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resultText: {fileID: 48592940}
-  brickPrefab: {fileID: 3646150855518645780, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
-  parentForInstantiatedTiles: {fileID: 40485019}
-  inputFile: 0
+  <ResultText>k__BackingField: {fileID: 48592940}
+  <BrickPrefab>k__BackingField: {fileID: 3646150855518645780, guid: e9f26513500fa45dd8292c9e87be19fe, type: 3}
+  <ParentForInstantiatedTiles>k__BackingField: {fileID: 40485019}
+  <InputFile>k__BackingField: 0
 --- !u!1 &1122081740
 GameObject:
   m_ObjectHideFlags: 0

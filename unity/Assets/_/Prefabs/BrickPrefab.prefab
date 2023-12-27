@@ -46,11 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61162d32ffda34039bd01bfa7e20d29b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  xyzMin: {x: 0, y: 0, z: 0}
-  xyzMax: {x: 0, y: 0, z: 0}
-  safeToDisintegrate: 0
-  regularBrickMaterial: {fileID: 2100000, guid: b4ab158dbe4a54f8d8bd6c31ce890dbb, type: 2}
-  markedBrickMaterial: {fileID: 2100000, guid: 8561e67e657644948aa71070bc980ffe, type: 2}
+  <XyzMin>k__BackingField: {x: 0, y: 0, z: 0}
+  <XyzMax>k__BackingField: {x: 0, y: 0, z: 0}
+  <SafeToDisintegrate>k__BackingField: 0
+  <RegularBrickMaterial>k__BackingField: {fileID: 2100000, guid: b4ab158dbe4a54f8d8bd6c31ce890dbb, type: 2}
+  <MarkedBrickMaterial>k__BackingField: {fileID: 2100000, guid: 8561e67e657644948aa71070bc980ffe, type: 2}
 --- !u!33 &3646150855518645782
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -19,22 +19,17 @@ namespace aoc2023.Day22
             Puzzle
         }
 
-        [SerializeField]
-        private TextMeshProUGUI? resultText;
-        [SerializeField]
-        private GameObject? brickPrefab;
-        [SerializeField]
-        private GameObject? parentForInstantiatedTiles;
-
-        [SerializeField]
-        private Input inputFile;
+        [field: SerializeField] private TextMeshProUGUI? ResultText { get; set; }
+        [field: SerializeField] private GameObject? BrickPrefab { get; set; }
+        [field: SerializeField] private GameObject? ParentForInstantiatedTiles { get; set; }
+        [field: SerializeField] private Input InputFile { get; set; }
 
         private async void Start()
         {
-            if (resultText == null) throw new Exception($"null {nameof(resultText)}");
-            resultText.text = "...";
+            if (ResultText == null) throw new Exception($"null {nameof(ResultText)}");
+            ResultText.text = "...";
 
-            var bricksCoords = Day22Steps.Step1_Parse(inputFile switch
+            var bricksCoords = Day22Steps.Step1_Parse(InputFile switch
             {
                 Input.Example => "day22/example.txt",
                 Input.Puzzle => "day22/puzzle.txt",
@@ -42,17 +37,17 @@ namespace aoc2023.Day22
             });
             var bricks = bricksCoords.Select(brickCoords =>
             {
-                var brick = Instantiate(brickPrefab, Vector3.zero, Quaternion.identity)!.GetComponent<Brick>();
-                if (parentForInstantiatedTiles != null)
+                var brick = Instantiate(BrickPrefab, Vector3.zero, Quaternion.identity)!.GetComponent<Brick>();
+                if (ParentForInstantiatedTiles != null)
                 {
-                    brick.transform.parent = parentForInstantiatedTiles.transform;
+                    brick.transform.parent = ParentForInstantiatedTiles.transform;
                 }
-                brick.xyzMin = Vector3Int.Min(brickCoords.Item1, brickCoords.Item2);
-                brick.xyzMax = Vector3Int.Max(brickCoords.Item1, brickCoords.Item2);
+                brick.XyzMin = Vector3Int.Min(brickCoords.Item1, brickCoords.Item2);
+                brick.XyzMax = Vector3Int.Max(brickCoords.Item1, brickCoords.Item2);
                 return brick;
             }).ToDictionary(b => b.Id);
 
-            var maxZ = bricks.Values.Select(b => b.xyzMax.z).Max();
+            var maxZ = bricks.Values.Select(b => b.XyzMax.z).Max();
             var frustumHeight = (maxZ + 4) * 1.1f;
             var distance = frustumHeight * .5f / Mathf.Tan(Camera.main.fieldOfView * 0.5f * Mathf.Deg2Rad);
             Debug.Log(distance);
@@ -72,7 +67,7 @@ namespace aoc2023.Day22
             Day22Steps.Step3_MarkSafeToDisintegrate(bricks);
 
             var result = Day22Steps.Step4_CountSafeToDisintegrate(bricks);
-            resultText.text = $"{result}";
+            ResultText.text = $"{result}";
         }
     }
 
@@ -103,27 +98,27 @@ namespace aoc2023.Day22
 
         public static void Step2_SettleFall(IDictionary<int, Brick> bricks)
         {
-            var maxX = bricks.Values.Select(b => b.xyzMax.x).Max();
-            var maxY = bricks.Values.Select(b => b.xyzMax.y).Max();
+            var maxX = bricks.Values.Select(b => b.XyzMax.x).Max();
+            var maxY = bricks.Values.Select(b => b.XyzMax.y).Max();
             var highestBricksSoFar = Enumerable.Range(0, maxX + 1).Select(_ =>
                 Enumerable.Range(0, maxY + 1).Select(_ => Brick.Ground).ToArray()
             ).ToArray();
-            foreach (var current in bricks.Values.OrderBy(b => b.xyzMin.z))
+            foreach (var current in bricks.Values.OrderBy(b => b.XyzMin.z))
             {
                 var localMaxHeight = 0;
-                for (var x = current.xyzMin.x; x <= current.xyzMax.x; x++)
+                for (var x = current.XyzMin.x; x <= current.XyzMax.x; x++)
                 {
-                    for (var y = current.xyzMin.y; y <= current.xyzMax.y; y++)
+                    for (var y = current.XyzMin.y; y <= current.XyzMax.y; y++)
                     {
-                        localMaxHeight = Math.Max(localMaxHeight, highestBricksSoFar[x][y].xyzMax.z);
+                        localMaxHeight = Math.Max(localMaxHeight, highestBricksSoFar[x][y].XyzMax.z);
                     }
                 }
                 current.FallTo(localMaxHeight + 1);
-                for (var x = current.xyzMin.x; x <= current.xyzMax.x; x++)
+                for (var x = current.XyzMin.x; x <= current.XyzMax.x; x++)
                 {
-                    for (var y = current.xyzMin.y; y <= current.xyzMax.y; y++)
+                    for (var y = current.XyzMin.y; y <= current.XyzMax.y; y++)
                     {
-                        if (highestBricksSoFar[x][y].xyzMax.z == localMaxHeight)
+                        if (highestBricksSoFar[x][y].XyzMax.z == localMaxHeight)
                         {
                             current.ConnectAsSupporting(highestBricksSoFar[x][y]);
                         }
@@ -137,7 +132,7 @@ namespace aoc2023.Day22
         {
             foreach (var brick in bricks.Values)
             {
-                brick.safeToDisintegrate = brick.SupportedBricks.All(topBrickId =>
+                brick.SafeToDisintegrate = brick.SupportedBricks.All(topBrickId =>
                     bricks[topBrickId].SupportingBricks.Count(siblingBrickId =>
                         siblingBrickId != brick.Id
                     ) > 0
@@ -147,7 +142,7 @@ namespace aoc2023.Day22
 
         public static int Step4_CountSafeToDisintegrate(IDictionary<int, Brick> bricks)
         {
-            return bricks.Values.Count(b => b.safeToDisintegrate);
+            return bricks.Values.Count(b => b.SafeToDisintegrate);
         }
     }
 }

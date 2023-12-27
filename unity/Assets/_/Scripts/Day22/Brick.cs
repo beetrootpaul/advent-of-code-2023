@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace aoc2023.Day22
 {
@@ -12,27 +8,23 @@ namespace aoc2023.Day22
     {
         public static readonly Brick Ground = new()
         {
-            xyzMin = new Vector3Int(-999_999_999, -999_999_999, 0),
-            xyzMax = new Vector3Int(999_999_999, 999_999_999, 0)
+            XyzMin = new Vector3Int(-999_999_999, -999_999_999, 0),
+            XyzMax = new Vector3Int(999_999_999, 999_999_999, 0)
         };
 
         private static int _nextId = 1;
-
         public readonly int Id = _nextId++;
-        [SerializeField]
-        public Vector3Int xyzMin;
-        [SerializeField]
-        public Vector3Int xyzMax;
-        [SerializeField]
-        public bool safeToDisintegrate = false;
 
-        [SerializeField]
-        private Material? regularBrickMaterial;
-        [SerializeField]
-        private Material? markedBrickMaterial;
+        [field: SerializeField] public Vector3Int XyzMin { get; set; }
+        [field: SerializeField] public Vector3Int XyzMax { get; set; }
+        [field: SerializeField] public bool SafeToDisintegrate { get; set; }
+
+        [field: SerializeField] private Material? RegularBrickMaterial { get; set; }
+        [field: SerializeField] private Material? MarkedBrickMaterial { get; set; }
 
         internal readonly ICollection<int> SupportingBricks = new HashSet<int>();
         internal readonly ICollection<int> SupportedBricks = new HashSet<int>();
+
         private MeshRenderer _meshRenderer;
 
         private void Awake()
@@ -42,25 +34,23 @@ namespace aoc2023.Day22
 
         private void Update()
         {
-            transform.position = xyzMin + (Vector3)(Size - Vector3Int.one) / 2f;
+            transform.position = XyzMin + (Vector3)(Size - Vector3Int.one) / 2f;
             transform.localScale = Size;
 
-            if (safeToDisintegrate && markedBrickMaterial != null)
+            _meshRenderer.materials = SafeToDisintegrate switch
             {
-                _meshRenderer.materials = new[] { markedBrickMaterial };
-            }
-            if (!safeToDisintegrate && regularBrickMaterial != null)
-            {
-                _meshRenderer.materials = new[] { regularBrickMaterial };
-            }
+                true when MarkedBrickMaterial != null => new[] { MarkedBrickMaterial },
+                false when RegularBrickMaterial != null => new[] { RegularBrickMaterial },
+                _ => _meshRenderer.materials
+            };
         }
 
-        private Vector3Int Size => xyzMax - xyzMin + Vector3Int.one;
+        private Vector3Int Size => XyzMax - XyzMin + Vector3Int.one;
 
         public void FallTo(int newZMin)
         {
-            xyzMax = new Vector3Int(xyzMax.x, xyzMax.y, newZMin + Size.z - 1);
-            xyzMin = new Vector3Int(xyzMin.x, xyzMin.y, newZMin);
+            XyzMax = new Vector3Int(XyzMax.x, XyzMax.y, newZMin + Size.z - 1);
+            XyzMin = new Vector3Int(XyzMin.x, XyzMin.y, newZMin);
         }
 
         public void ConnectAsSupporting(Brick lowerBrick)
@@ -69,20 +59,18 @@ namespace aoc2023.Day22
             lowerBrick.SupportedBricks.Add(Id);
         }
 
-        public string Serialized()
+        public override string ToString()
         {
             var supporting = $"|{string.Join(",", SupportingBricks.OrderBy(id => id))}| -> ";
-            var xCoords = $"{xyzMin.x}{(Size.x > 1 ? $"_{xyzMax.x}" : "")}";
-            var yCoords = $"{xyzMin.y}{(Size.y > 1 ? $"_{xyzMax.y}" : "")}";
-            var zCoords = $"{xyzMin.z}{(Size.z > 1 ? $"_{xyzMax.z}" : "")}";
+            var xCoords = $"{XyzMin.x}{(Size.x > 1 ? $"_{XyzMax.x}" : "")}";
+            var yCoords = $"{XyzMin.y}{(Size.y > 1 ? $"_{XyzMax.y}" : "")}";
+            var zCoords = $"{XyzMin.z}{(Size.z > 1 ? $"_{XyzMax.z}" : "")}";
             var id = $"{Id}:";
             var coords =
                 $"[ {xCoords} , {yCoords} , {zCoords} ]";
-            var attributes = $"{(safeToDisintegrate ? " (X)" : "")}";
+            var attributes = $"{(SafeToDisintegrate ? " (X)" : "")}";
             var supported = $" -> |{string.Join(",", SupportedBricks.OrderBy(id => id))}|";
             return $"{supporting}{id}{coords}{attributes}{supported}";
         }
-
-        public override string ToString() => Serialized();
     }
 }
