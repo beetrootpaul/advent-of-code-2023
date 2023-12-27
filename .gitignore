@@ -1,10 +1,6 @@
 # proprietary AoC test data
-example*_in.txt
-example*_out.txt
-puzzle*_in.txt
-puzzle*_out.txt
+example*.txt
+puzzle*.txt
 # and its related Unity metadata files, so we won't end up with metadata without the actucal content
-/unity/**/example*_in.txt.meta
-/unity/**/example*_out.txt.meta
-/unity/**/puzzle*_in.txt.meta
-/unity/**/puzzle*_out.txt.meta
+/unity/**/example*.txt.meta
+/unity/**/puzzle*.txt.meta
