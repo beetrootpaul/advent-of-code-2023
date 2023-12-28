@@ -8,11 +8,13 @@ var original_auto_reload_setting: bool
 
 # LIFECYCLE EVENTS
 func _enter_tree():
+	print_debug("~~ enter tree ~~")
 	activate_auto_reload_setting()
 	resource_saved.connect(on_resource_saved)
 
 
 func _exit_tree():
+	print_debug("~~ exit tree ~~~")
 	resource_saved.disconnect(on_resource_saved)
 	restore_original_auto_reload_setting()
 
@@ -29,10 +31,13 @@ func on_resource_saved(resource: Resource):
 
 		# Prevents other unsaved scripts from overwriting the active one
 		if current_script == script:
+			print_debug("curr = script")
 			var filepath: String = ProjectSettings.globalize_path(resource.resource_path)
 
 			# Run gdformat
 			var exit_code = OS.execute("gdformat", [filepath])
+			print_debug("filepath = ", filepath)
+			print_debug("exit_code = ", exit_code)
 
 			# Replace source_code with formatted source_code
 			if exit_code == SUCCESS:
