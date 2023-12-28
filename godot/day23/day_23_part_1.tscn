@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bnguos3yghhkm"]
+
+[ext_resource type="Script" path="res://day23/day_23_part_1.gd" id="1_lgqmo"]
+
+[sub_resource type="Theme" id="Theme_g0eul"]
+default_font_size = 48
+
+[node name="day_23_part_1" type="Node2D"]
+script = ExtResource("1_lgqmo")
+
+[node name="RESULT_text" type="Label" parent="."]
+offset_right = 360.0
+offset_bottom = 67.0
+size_flags_vertical = 1
+theme = SubResource("Theme_g0eul")
+text = "[ Day 16 Part 1 ]"

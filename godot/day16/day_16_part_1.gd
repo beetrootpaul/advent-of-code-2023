@@ -22,13 +22,13 @@ func _ready() -> void:
 			visitedRow.append(0)
 		visited.append(visitedRow)
 	var n = contraption[0].length()
-	print_debug(n)
-	print_debug(contraption)
+	#print_debug(n)
+	#print_debug(contraption)
 	
 	var queueToVisit = [_traversal(0,0,RIGHT)]
 	while (queueToVisit.size() > 0):
 		var t = queueToVisit.pop_front()
-		print_debug(t)
+	#print_debug(t)
 		if (t.y < 0 || t.x < 0 || t.y >= n || t.x >= n):
 			pass
 		elif (visited[t.y][t.x] & t.direction == t.direction):
@@ -87,7 +87,7 @@ func _ready() -> void:
 				queueToVisit.push_back(_traversal(t.x - 1, t.y, LEFT))
 			if (t.direction == DOWN):
 				queueToVisit.push_back(_traversal(t.x + 1, t.y, RIGHT))
-	print_debug(visited)
+				#print_debug(visited)
 	
 	var energizedTiles = 0
 	for r in n:
