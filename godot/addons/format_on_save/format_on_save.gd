@@ -8,20 +8,17 @@ var original_auto_reload_setting: bool
 
 # LIFECYCLE EVENTS
 func _enter_tree():
-	print_debug("~~ enter tree ~~")
 	activate_auto_reload_setting()
 	resource_saved.connect(on_resource_saved)
 
 
 func _exit_tree():
-	print_debug("~~ exit tree ~~~")
 	resource_saved.disconnect(on_resource_saved)
 	restore_original_auto_reload_setting()
 
 
 # CALLED WHEN A SCRIPT IS SAVED
 func on_resource_saved(resource: Resource):
-	print_debug("!!! ON SAVED !!!")
 	if resource is Script:
 		var script: Script = resource
 		var current_script = get_editor_interface().get_script_editor().get_current_script()
@@ -31,18 +28,23 @@ func on_resource_saved(resource: Resource):
 
 		# Prevents other unsaved scripts from overwriting the active one
 		if current_script == script:
-			print_debug("curr = script")
 			var filepath: String = ProjectSettings.globalize_path(resource.resource_path)
 
 			# Run gdformat
-			var exit_code = OS.execute("gdformat", [filepath])
-			print_debug("filepath = ", filepath)
-			print_debug("exit_code = ", exit_code)
+			var output: Array[String] = []
+			# Beetroot Paul: Apparently, in my case the $PATH visible for the plugin
+			#   contain no "/opt/homebrew/bin" (which is probably set by my
+			#   `~/.zshrc`?), therefore I am adding it here, manually.
+			#var exit_code = OS.execute("gdformat", [filepath], output, true)
+			var exit_code = OS.execute("/opt/homebrew/bin/gdformat", [filepath], output, true)
 
 			# Replace source_code with formatted source_code
 			if exit_code == SUCCESS:
 				var formatted_source = FileAccess.get_file_as_string(resource.resource_path)
 				FormatOnSave.reload_script(text_edit, formatted_source)
+			else:
+				print_debug("Failed to format with gdformat. Output:")
+				print_debug(output)
 
 
 # Workaround until this PR is merged:
