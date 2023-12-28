@@ -19,6 +19,7 @@ func _exit_tree():
 
 # CALLED WHEN A SCRIPT IS SAVED
 func on_resource_saved(resource: Resource):
+	print_debug("!!! ON SAVED !!!")
 	if resource is Script:
 		var script: Script = resource
 		var current_script = get_editor_interface().get_script_editor().get_current_script()
