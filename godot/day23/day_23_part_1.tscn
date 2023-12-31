@@ -21,7 +21,7 @@ theme = SubResource("Theme_g0eul")
 text = "[ Day 16 Part 1 ]"
 
 [node name="TileMap" type="TileMap" parent="."]
-scale = Vector2(10, 10)
+scale = Vector2(4, 4)
 tile_set = ExtResource("2_q8urt")
 format = 2
 layer_0/name = "bg"
