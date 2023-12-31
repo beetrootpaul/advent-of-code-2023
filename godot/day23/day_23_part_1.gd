@@ -1,6 +1,9 @@
 extends Node2D
 
 @export var tilemap: TileMap
+@export var inputFile: InputFile
+
+enum InputFile { Example1, Puzzle1 }
 
 const tiles = {
 	"pathRegular": Vector2i(0, 3),
@@ -22,8 +25,12 @@ const tiles = {
 
 
 func _ready() -> void:
-	var filePath = "res://day23/example1_in.txt"
-	#var filePath = "res://day23/puzzle1_in.txt"
+	var filePath: String
+	match inputFile:
+		InputFile.Example1:
+			filePath = "res://day23/example1_in.txt"
+		InputFile.Puzzle1:
+			filePath = "res://day23/puzzle1_in.txt"
 
 	var input: String = FileAccess.open(filePath, FileAccess.READ).get_as_text()
 	print_debug(input)
