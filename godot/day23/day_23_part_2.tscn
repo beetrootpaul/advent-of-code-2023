@@ -10,6 +10,7 @@ default_font_size = 64
 script = ExtResource("1_3q082")
 tilemap = NodePath("TileMap")
 result_text = NodePath("Camera2D/RESULT_text")
+input_file = 1
 
 [node name="TileMap" type="TileMap" parent="."]
 scale = Vector2(4, 4)

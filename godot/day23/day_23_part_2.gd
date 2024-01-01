@@ -32,8 +32,11 @@ const tiles = {
 const tile_size = Vector2i(16, 16)
 
 var forest_map: Array = []
+var start: Vector2i = Vector2i(1, 1)
+var end: Vector2i = Vector2i(1, 1)
 var visited_tiles: Array[Array] = []
-var max_length: int = 0
+var max_lengths: Array[Array] = []
+var started: bool = false
 var finished: bool = false
 
 var computation: Thread
@@ -57,6 +60,15 @@ func _ready() -> void:
 	)
 	add_padding()
 
+	for col in forest_map[1].length():
+		if forest_map[1][col] != "#":
+			start = Vector2i(col, 1)
+			break
+	for col in forest_map[forest_map.size() - 2].length():
+		if forest_map[forest_map.size() - 2][col] != "#":
+			end = Vector2i(col, forest_map.size() - 2)
+			break
+
 	# Remove sample tiles used only for visualizatin purpose in the editor
 	tilemap.clear()
 
@@ -68,7 +80,8 @@ func _ready() -> void:
 func _process(delta) -> void:
 	draw_tiles()
 	fit_tiles_in_camera()
-	result_text.text = str(max_length)
+	if started:
+		result_text.text = str(max_lengths[end.y][end.x])
 	if finished:
 		result_text.text += " DONE"
 
@@ -128,26 +141,19 @@ func draw_tiles() -> void:
 func compute_longest_path() -> void:
 	for forest_row in forest_map:
 		var visited_row: Array[bool] = []
+		var max_lengths_row: Array[int] = []
 		for tile in forest_row:
 			visited_row.append(false)
+			max_lengths_row.append(-1)
 		visited_tiles.append(visited_row)
-
-	var start: Vector2i = Vector2i(1, 1)
-	for col in forest_map[1].length():
-		if forest_map[1][col] != "#":
-			start = Vector2i(col, 1)
-			break
-
-	var end: Vector2i = Vector2i(1, forest_map.size() - 2)
-	for col in forest_map[forest_map.size() - 2].length():
-		if forest_map[forest_map.size() - 2][col] != "#":
-			end = Vector2i(col, forest_map.size() - 2)
-			break
+		max_lengths.append(max_lengths_row)
 
 	#print_debug(forest_map.size() * forest_map[0].length())
 	var map_size: int = forest_map.size() * forest_map[0].length()
 	var step_duration: float = 6.25 / map_size
 	var sync_computation_chain: int = max(map_size * map_size / 2_000_000, 1)
+
+	started = true
 
 	# element struct: xy, length, list of visited tile xy (path)
 	var stack: Array = [[start, 0, [start]]]
@@ -158,9 +164,9 @@ func compute_longest_path() -> void:
 		var length = tmp[1]
 		var visited_path = tmp[2]
 
-		if xy == end:
-			max_length = max(length, max_length)
+		if max_lengths[xy.y][xy.x] > length + 1:
 			continue
+		max_lengths[xy.y][xy.x] = length + 1
 
 		for row in visited_tiles.size():
 			for col in visited_tiles[row].size():
