@@ -24,17 +24,13 @@ namespace aoc2023
             Puzzle2
         }
 
-        [SerializeReference]
-        private TextMeshProUGUI? resultText;
+        [SerializeReference] private TextMeshProUGUI? resultText;
 
-        [SerializeReference]
-        private TextMeshProUGUI? progressText;
+        [SerializeReference] private TextMeshProUGUI? progressText;
 
-        [SerializeField]
-        private Input inputFile;
+        [SerializeField] private Input inputFile;
 
         private bool _finished;
-        private readonly CancellationTokenSource _destroyCancellationTokenSource = new();
 
         private const int MaxN = 150;
 
@@ -73,8 +69,6 @@ namespace aoc2023
         private void OnApplicationQuit()
         {
             _finished = true;
-            _destroyCancellationTokenSource.Cancel();
-            _destroyCancellationTokenSource.Dispose();
         }
 
         private async Task<long> CalculateFor(string file)
@@ -87,7 +81,7 @@ namespace aoc2023
             {
                 lines = await File.ReadAllLinesAsync(
                     $"{Application.streamingAssetsPath}/{file}",
-                    _destroyCancellationTokenSource.Token
+                    destroyCancellationToken
                 );
             }
             catch
@@ -467,7 +461,7 @@ namespace aoc2023
 
         private async Task UnblockAndCheckIfCancelled()
         {
-            _destroyCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            destroyCancellationToken.ThrowIfCancellationRequested();
 
             // unblock the execution by yielding
             await Task.Yield();
