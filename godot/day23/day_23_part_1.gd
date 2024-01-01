@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var tilemap: TileMap
-@export var inputFile: InputFile
+@export var input_file: InputFile
 
 enum InputFile { Example1, Puzzle1 }
 
@@ -23,10 +23,12 @@ const tiles = {
 	"forestEdgesBottom": Vector2i(3, 2),
 }
 
+const tile_size = Vector2i(16, 16)
+
 
 func _ready() -> void:
 	var filePath: String
-	match inputFile:
+	match input_file:
 		InputFile.Example1:
 			filePath = "res://day23/example1_in.txt"
 		InputFile.Puzzle1:
@@ -48,7 +50,7 @@ func _ready() -> void:
 
 
 func _process(delta) -> void:
-	pass
+	fit_tiles_in_camera()
 
 
 func draw_tiles(forestMap: Array) -> void:
@@ -96,3 +98,15 @@ func draw_tiles(forestMap: Array) -> void:
 					fgTile = tiles.forestEdgesTopBottom
 			tilemap.set_cell(0, Vector2i(col, row), 0, bgTile)
 			tilemap.set_cell(1, Vector2i(col, row), 0, fgTile)
+
+
+func fit_tiles_in_camera():
+	var perfect_fit_scale = (
+		get_viewport_rect().size / Vector2(tilemap.get_used_rect().size * tile_size)
+	)
+	#print_debug("perfect_fit_scale: ", perfect_fit_scale)
+	var ratio_preserving_scale = Vector2(
+		min(perfect_fit_scale.x, perfect_fit_scale.y), min(perfect_fit_scale.x, perfect_fit_scale.y)
+	)
+	#print_debug("ratio_preserving_scale: ", ratio_preserving_scale)
+	tilemap.scale = ratio_preserving_scale
