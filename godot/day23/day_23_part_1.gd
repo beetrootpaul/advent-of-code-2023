@@ -1,6 +1,8 @@
 extends Node2D
 
 @export var tilemap: TileMap
+@export var result_text: Label
+
 @export var input_file: InputFile
 
 enum InputFile { Example1, Puzzle1 }
@@ -33,6 +35,11 @@ const tiles = {
 
 const tile_size = Vector2i(16, 16)
 
+var forest_map: Array = []
+var visited_tiles: Array[Array] = []
+var max_length: int = 0
+var finished: bool = false
+
 
 func _ready() -> void:
 	var filePath: String
@@ -45,44 +52,55 @@ func _ready() -> void:
 	var input: String = FileAccess.open(filePath, FileAccess.READ).get_as_text()
 	print_debug(input)
 	# TODO: How to make it of type `Array[String]`?
-	var forest_map: Array = (
+	forest_map = (
 		Array(input.split("\n"))
 		. map(func(line: String): return line.strip_edges())
 		. filter(func(line: String): return line.length() > 0)
 	)
-	print_debug(forest_map)
-	forest_map = add_padding(forest_map)
-	print_debug(forest_map)
+	add_padding()
 
 	# Remove sample tiles used only for visualizatin purpose in the editor
 	tilemap.clear()
 
-	draw_tiles(forest_map)
-	#
-	#await compute_lonest_path()
+	await compute_longest_path()
+	finished = true
 
 
 func _process(delta) -> void:
+	draw_tiles()
 	fit_tiles_in_camera()
+	result_text.text = str(max_length)
+	if finished:
+		result_text.text += " DONE"
 
 
-func add_padding(forest_map: Array) -> Array:
+func add_padding() -> void:
 	var padded: Array = ["#".repeat(forest_map[0].length() + 2)]
 	padded += forest_map.map(func(row: String): return "#" + row + "#")
 	padded.append("#".repeat(forest_map[0].length() + 2))
-	return padded
+	forest_map = padded
 
 
-func draw_tiles(forest_map: Array) -> void:
+func draw_tiles() -> void:
 	# Here we account for a 1 tile of padding around the map
 	for row in range(1, forest_map.size() - 1):
 		for col in range(1, forest_map[row].length() - 1):
-			var bg_tile = tiles.path_regular
+			var bg_tile = (
+				tiles.path_regular_marked if visited_tiles[row][col] else tiles.path_regular
+			)
 			var fg_tile = tiles.forest_nil
 			if forest_map[row][col] == ">":
-				bg_tile = tiles.path_slope_east
+				bg_tile = (
+					tiles.path_slope_east_marked
+					if visited_tiles[row][col]
+					else tiles.path_slope_east
+				)
 			if forest_map[row][col] == "v":
-				bg_tile = tiles.path_slope_south
+				bg_tile = (
+					tiles.path_slope_south_marked
+					if visited_tiles[row][col]
+					else tiles.path_slope_south
+				)
 			if forest_map[row][col] == "#":
 				fg_tile = tiles.forest_full
 			if forest_map[row][col] != "#":
@@ -114,6 +132,63 @@ func draw_tiles(forest_map: Array) -> void:
 			# Here we account for a 1 tile of padding around the map
 			tilemap.set_cell(0, Vector2i(col - 1, row - 1), 0, bg_tile)
 			tilemap.set_cell(1, Vector2i(col - 1, row - 1), 0, fg_tile)
+
+
+func compute_longest_path() -> void:
+	for forest_row in forest_map:
+		var visited_row: Array[bool] = []
+		for tile in forest_row:
+			visited_row.append(false)
+		visited_tiles.append(visited_row)
+
+	var start: Vector2i = Vector2i(1, 1)
+	for col in forest_map[1].length():
+		if forest_map[1][col] != "#":
+			start = Vector2i(col, 1)
+			break
+
+	var end: Vector2i = Vector2i(1, forest_map.size() - 2)
+	for col in forest_map[forest_map.size() - 2].length():
+		if forest_map[forest_map.size() - 2][col] != "#":
+			end = Vector2i(col, forest_map.size() - 2)
+			break
+
+	print_debug(forest_map.size() * forest_map[0].length())
+	var map_size: int = forest_map.size() * forest_map[0].length()
+	var step_duration: float = 6.25 / map_size
+	var sync_computation_chain: int = max(map_size * map_size / 2_000_000, 1)
+
+	# element struct: xy, length, list of visited tile xy (path)
+	var stack: Array = [[start, 1, [start]]]
+	var chain = 1
+	while !stack.is_empty():
+		var tmp = stack.pop_back()
+		var xy = tmp[0]
+		var length = tmp[1]
+		var visited_path = tmp[2]
+
+		if xy == end:
+			max_length = max(length, max_length)
+			continue
+
+		for row in visited_tiles.size():
+			for col in visited_tiles[row].size():
+				visited_tiles[row][col] = false
+		for v in visited_path:
+			visited_tiles[v.y][v.x] = true
+
+		if chain % sync_computation_chain == 0:
+			await get_tree().create_timer(0.01).timeout
+		chain += 1
+
+		for direction in [Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT, Vector2i.UP]:
+			var next = xy + direction
+			if !visited_tiles[next.y][next.x] and forest_map[next.y][next.x] != "#":
+				if direction == Vector2i.LEFT and forest_map[next.y][next.x] == ">":
+					continue
+				if direction == Vector2i.UP and forest_map[next.y][next.x] == "v":
+					continue
+				stack.push_back([next, length + 1, visited_path + [next]])
 
 
 func fit_tiles_in_camera():
