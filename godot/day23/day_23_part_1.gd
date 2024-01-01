@@ -6,29 +6,29 @@ extends Node2D
 enum InputFile { Example1, Puzzle1 }
 
 const tiles = {
-	"forestNil": Vector2i(0, 0),
-	"forestFull": Vector2i(1, 0),
+	"forest_nil": Vector2i(0, 0),
+	"forest_full": Vector2i(1, 0),
 	#
-	"forestEdgesLeftRight": Vector2i(2, 0),
-	"forestEdgesTopBottom": Vector2i(3, 0),
+	"forest_edges_lr": Vector2i(2, 0),
+	"forest_edges_tb": Vector2i(3, 0),
 	#
-	"forestEdgesTopLeft": Vector2i(0, 1),
-	"forestEdgesTopRight": Vector2i(1, 1),
-	"forestEdgesBottomLeft": Vector2i(2, 1),
-	"forestEdgesBottomRight": Vector2i(3, 1),
+	"forest_edges_tl": Vector2i(0, 1),
+	"forest_edges_tr": Vector2i(1, 1),
+	"forest_edges_bl": Vector2i(2, 1),
+	"forest_edges_br": Vector2i(3, 1),
 	#
-	"forestEdgesLeft": Vector2i(0, 2),
-	"forestEdgesTop": Vector2i(1, 2),
-	"forestEdgesRight": Vector2i(2, 2),
-	"forestEdgesBottom": Vector2i(3, 2),
+	"forest_edges_l": Vector2i(0, 2),
+	"forest_edges_t": Vector2i(1, 2),
+	"forest_edges_r": Vector2i(2, 2),
+	"forest_edges_b": Vector2i(3, 2),
 	#
-	"pathRegular": Vector2i(0, 3),
-	"pathSlopeEast": Vector2i(1, 3),
-	"pathSlopeSouth": Vector2i(2, 3),
+	"path_regular": Vector2i(0, 3),
+	"path_slope_east": Vector2i(1, 3),
+	"path_slope_south": Vector2i(2, 3),
 	#
-	"pathRegularMarked": Vector2i(3, 3),
-	"pathSlopeSouthMarked": Vector2i(0, 4),
-	"pathSlopeEastMarked": Vector2i(1, 4),
+	"path_regular_marked": Vector2i(3, 3),
+	"path_slope_east_marked": Vector2i(0, 4),
+	"path_slope_south_marked": Vector2i(1, 4),
 }
 
 const tile_size = Vector2i(16, 16)
@@ -45,67 +45,75 @@ func _ready() -> void:
 	var input: String = FileAccess.open(filePath, FileAccess.READ).get_as_text()
 	print_debug(input)
 	# TODO: How to make it of type `Array[String]`?
-	var forestMap: Array = (
+	var forest_map: Array = (
 		Array(input.split("\n"))
 		. map(func(line: String): return line.strip_edges())
 		. filter(func(line: String): return line.length() > 0)
 	)
+	print_debug(forest_map)
+	forest_map = add_padding(forest_map)
+	print_debug(forest_map)
 
 	# Remove sample tiles used only for visualizatin purpose in the editor
 	tilemap.clear()
 
-	draw_tiles(forestMap)
+	draw_tiles(forest_map)
+	#
+	#await compute_lonest_path()
 
 
 func _process(delta) -> void:
 	fit_tiles_in_camera()
 
 
-func draw_tiles(forestMap: Array) -> void:
-	for row in forestMap.size():
-		for col in forestMap[row].length():
-			var bgTile = tiles.pathRegular
-			var fgTile = tiles.forestNil
-			if forestMap[row][col] == ">":
-				bgTile = tiles.pathSlopeEast
-			if forestMap[row][col] == "v":
-				bgTile = tiles.pathSlopeSouth
-			if forestMap[row][col] == "#":
-				fgTile = tiles.forestFull
-			if (
-				forestMap[row][col] != "#"
-				and row > 0
-				and col > 0
-				and row < forestMap.size() - 1
-				and col < forestMap[row].length() - 1
-			):
-				if forestMap[row][col - 1] == "#" and forestMap[row][col + 1] == "#":
-					fgTile = tiles.forestEdgesLeftRight
-				elif forestMap[row - 1][col] == "#" and forestMap[row + 1][col] == "#":
-					fgTile = tiles.forestEdgesTopBottom
-				elif forestMap[row - 1][col] == "#" and forestMap[row][col - 1] == "#":
-					fgTile = tiles.forestEdgesTopLeft
-				elif forestMap[row - 1][col] == "#" and forestMap[row][col + 1] == "#":
-					fgTile = tiles.forestEdgesTopRight
-				elif forestMap[row + 1][col] == "#" and forestMap[row][col - 1] == "#":
-					fgTile = tiles.forestEdgesBottomLeft
-				elif forestMap[row + 1][col] == "#" and forestMap[row][col + 1] == "#":
-					fgTile = tiles.forestEdgesBottomRight
-				elif forestMap[row][col - 1] == "#":
-					fgTile = tiles.forestEdgesLeft
-				elif forestMap[row - 1][col] == "#":
-					fgTile = tiles.forestEdgesTop
-				elif forestMap[row][col + 1] == "#":
-					fgTile = tiles.forestEdgesRight
-				elif forestMap[row + 1][col] == "#":
-					fgTile = tiles.forestEdgesBottom
-			elif forestMap[row][col] != "#":
-				if forestMap[row][col - 1] == "#" and forestMap[row][col + 1] == "#":
-					fgTile = tiles.forestEdgesLeftRight
-				elif forestMap[row - 1][col] == "#" and forestMap[row + 1][col] == "#":
-					fgTile = tiles.forestEdgesTopBottom
-			tilemap.set_cell(0, Vector2i(col, row), 0, bgTile)
-			tilemap.set_cell(1, Vector2i(col, row), 0, fgTile)
+func add_padding(forest_map: Array) -> Array:
+	var padded: Array = ["#".repeat(forest_map[0].length() + 2)]
+	padded += forest_map.map(func(row: String): return "#" + row + "#")
+	padded.append("#".repeat(forest_map[0].length() + 2))
+	return padded
+
+
+func draw_tiles(forest_map: Array) -> void:
+	# Here we account for a 1 tile of padding around the map
+	for row in range(1, forest_map.size() - 1):
+		for col in range(1, forest_map[row].length() - 1):
+			var bg_tile = tiles.path_regular
+			var fg_tile = tiles.forest_nil
+			if forest_map[row][col] == ">":
+				bg_tile = tiles.path_slope_east
+			if forest_map[row][col] == "v":
+				bg_tile = tiles.path_slope_south
+			if forest_map[row][col] == "#":
+				fg_tile = tiles.forest_full
+			if forest_map[row][col] != "#":
+				if forest_map[row][col - 1] == "#" and forest_map[row][col + 1] == "#":
+					fg_tile = tiles.forest_edges_lr
+				elif forest_map[row - 1][col] == "#" and forest_map[row + 1][col] == "#":
+					fg_tile = tiles.forest_edges_tb
+				elif forest_map[row - 1][col] == "#" and forest_map[row][col - 1] == "#":
+					fg_tile = tiles.forest_edges_tl
+				elif forest_map[row - 1][col] == "#" and forest_map[row][col + 1] == "#":
+					fg_tile = tiles.forest_edges_tr
+				elif forest_map[row + 1][col] == "#" and forest_map[row][col - 1] == "#":
+					fg_tile = tiles.forest_edges_bl
+				elif forest_map[row + 1][col] == "#" and forest_map[row][col + 1] == "#":
+					fg_tile = tiles.forest_edges_br
+				elif forest_map[row][col - 1] == "#":
+					fg_tile = tiles.forest_edges_l
+				elif forest_map[row - 1][col] == "#":
+					fg_tile = tiles.forest_edges_t
+				elif forest_map[row][col + 1] == "#":
+					fg_tile = tiles.forest_edges_r
+				elif forest_map[row + 1][col] == "#":
+					fg_tile = tiles.forest_edges_b
+			elif forest_map[row][col] != "#":
+				if forest_map[row][col - 1] == "#" and forest_map[row][col + 1] == "#":
+					fg_tile = tiles.forest_edges_lr
+				elif forest_map[row - 1][col] == "#" and forest_map[row + 1][col] == "#":
+					fg_tile = tiles.forest_edges_tb
+			# Here we account for a 1 tile of padding around the map
+			tilemap.set_cell(0, Vector2i(col - 1, row - 1), 0, bg_tile)
+			tilemap.set_cell(1, Vector2i(col - 1, row - 1), 0, fg_tile)
 
 
 func fit_tiles_in_camera():
