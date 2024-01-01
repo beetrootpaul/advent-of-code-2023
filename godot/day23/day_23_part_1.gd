@@ -40,6 +40,8 @@ var visited_tiles: Array[Array] = []
 var max_length: int = 0
 var finished: bool = false
 
+var computation: Thread
+
 
 func _ready() -> void:
 	var filePath: String
@@ -62,8 +64,9 @@ func _ready() -> void:
 	# Remove sample tiles used only for visualizatin purpose in the editor
 	tilemap.clear()
 
-	await compute_longest_path()
-	finished = true
+	computation = Thread.new()
+	# You can bind multiple arguments to a function Callable.
+	computation.start(compute_longest_path.bind())
 
 
 func _process(delta) -> void:
@@ -72,6 +75,10 @@ func _process(delta) -> void:
 	result_text.text = str(max_length)
 	if finished:
 		result_text.text += " DONE"
+
+
+func _exit_tree():
+	computation.wait_to_finish()
 
 
 func add_padding() -> void:
@@ -153,13 +160,13 @@ func compute_longest_path() -> void:
 			end = Vector2i(col, forest_map.size() - 2)
 			break
 
-	print_debug(forest_map.size() * forest_map[0].length())
+	#print_debug(forest_map.size() * forest_map[0].length())
 	var map_size: int = forest_map.size() * forest_map[0].length()
 	var step_duration: float = 6.25 / map_size
 	var sync_computation_chain: int = max(map_size * map_size / 2_000_000, 1)
 
 	# element struct: xy, length, list of visited tile xy (path)
-	var stack: Array = [[start, 1, [start]]]
+	var stack: Array = [[start, 0, [start]]]
 	var chain = 1
 	while !stack.is_empty():
 		var tmp = stack.pop_back()
@@ -189,6 +196,8 @@ func compute_longest_path() -> void:
 				if direction == Vector2i.UP and forest_map[next.y][next.x] == "v":
 					continue
 				stack.push_back([next, length + 1, visited_path + [next]])
+
+	finished = true
 
 
 func fit_tiles_in_camera():
