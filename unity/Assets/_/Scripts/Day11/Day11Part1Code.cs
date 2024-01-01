@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -39,21 +37,16 @@ namespace aoc2023.Day11
             CalculateShortestPathsDone
         }
 
-        [SerializeField]
-        private TextMeshProUGUI? resultText;
+        [SerializeField] private TextMeshProUGUI? resultText;
 
         [FormerlySerializedAs("tileEmptyPrefab")]
         [SerializeField]
         private Tile? tilePrefab;
-        [SerializeField]
-        private Tile? tileStarPrefab;
-        [SerializeField]
-        private Button? nextButton;
-        [SerializeField]
-        private Transform? parentForInstantiatedTiles;
+        [SerializeField] private Tile? tileStarPrefab;
+        [SerializeField] private Button? nextButton;
+        [SerializeField] private Transform? parentForInstantiatedTiles;
 
-        [SerializeField]
-        private Input inputFile;
+        [SerializeField] private Input inputFile;
 
         private Camera? _camera;
 
@@ -64,8 +57,6 @@ namespace aoc2023.Day11
         private readonly ICollection<int> _emptyCols = new HashSet<int>();
 
         private State _state = State.Init;
-
-        private readonly CancellationTokenSource _destroyCancellationTokenSource = new();
 
         private async void Start()
         {
@@ -91,12 +82,6 @@ namespace aoc2023.Day11
         private void OnDisable()
         {
             nextButton.onClick.RemoveListener(ProceedToNextState);
-        }
-
-        private void OnApplicationQuit()
-        {
-            _destroyCancellationTokenSource.Cancel();
-            _destroyCancellationTokenSource.Dispose();
         }
 
         private void ProceedToNextState()
@@ -139,14 +124,14 @@ namespace aoc2023.Day11
             }
         }
 
-        private async UniTask InitFor(string file)
+        private async Awaitable InitFor(string file)
         {
             string[] lines;
             try
             {
                 lines = await File.ReadAllLinesAsync(
                     $"{Application.streamingAssetsPath}/{file}",
-                    _destroyCancellationTokenSource.Token
+                    destroyCancellationToken
                 );
             }
             catch
@@ -182,7 +167,7 @@ namespace aoc2023.Day11
             }
         }
 
-        private async UniTask InstantiateTiles()
+        private async Awaitable InstantiateTiles()
         {
             var scale = new Vector2(
                 Math.Min(7f / _size.y, 7f / _size.x),
@@ -195,8 +180,7 @@ namespace aoc2023.Day11
                 _tiles.Add(new List<Tile>());
                 for (var col = 0; col < _size.x; col++)
                 {
-                    // This line is no longer needed since we moved from Task to 3rd party UniTask:
-                    // destroyCancellationToken.ThrowIfCancellationRequested();
+                    destroyCancellationToken.ThrowIfCancellationRequested();
 
                     var tile = Instantiate(
                         _imageData[row][col] == '#' ? tileStarPrefab : tilePrefab,
@@ -213,13 +197,13 @@ namespace aoc2023.Day11
                     tile.transform.localScale = scale;
                     _tiles[row].Add(tile);
 
-                    tile.Appear(500);
+                    tile.Appear(1000);
 
-                    // await UniTask.Delay(TimeSpan.FromSeconds(0.02));
+                    // await Task.Delay(TimeSpan.FromSeconds(0.02));
                 }
             }
 
-            await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+            await Task.Delay(TimeSpan.FromSeconds(0.5));
         }
 
         private void MarkEmptyRowsAndCols()
@@ -240,7 +224,7 @@ namespace aoc2023.Day11
             }
         }
 
-        private async UniTask ExpandEmptyRowsAndCols()
+        private async Awaitable ExpandEmptyRowsAndCols()
         {
             for (var col = _size.x - 1; col >= 0; col--)
             {
@@ -270,7 +254,7 @@ namespace aoc2023.Day11
             await InstantiateTiles();
         }
 
-        private async UniTask<List<int>> CalculateShortestPaths()
+        private async Awaitable<List<int>> CalculateShortestPaths()
         {
             var shortestPaths = new List<int>();
 
@@ -280,7 +264,7 @@ namespace aoc2023.Day11
                 {
                     if (_imageData[row][col] != '#') continue;
 
-                    _destroyCancellationTokenSource.Token.ThrowIfCancellationRequested();
+                    destroyCancellationToken.ThrowIfCancellationRequested();
                     for (var row2 = row; row2 < _size.y; row2++)
                     {
                         for (var col2 = 0; col2 < _size.x; col2++)
@@ -292,7 +276,7 @@ namespace aoc2023.Day11
                             }
                         }
                     }
-                    await UniTask.Yield();
+                    await Task.Yield();
                 }
             }
 

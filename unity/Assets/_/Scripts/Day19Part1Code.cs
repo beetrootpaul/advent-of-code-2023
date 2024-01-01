@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Linq;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -51,11 +50,9 @@ namespace aoc2023
             Puzzle1
         }
 
-        [SerializeField]
-        private TextMeshProUGUI? resultText;
+        [SerializeField] private TextMeshProUGUI? resultText;
 
-        [SerializeField]
-        private Input inputFile;
+        [SerializeField] private Input inputFile;
 
         private async void Start()
         {
@@ -84,22 +81,22 @@ namespace aoc2023
 
             resultText.text = "computing...";
             print("=== COMPUTE ===");
-            var acceptedRatings =
-                ratings.ToUniTaskAsyncEnumerable()
-                    .WhereAwait(async rating => await IsAccepted(rating, workflows, "in"));
-            await foreach (var ar in acceptedRatings)
+            List<Rating> acceptedRatings = new();
+            foreach (var rating in ratings)
             {
-                print($"ACCEPTED: {ar.X}");
+                if (!await IsAccepted(rating, workflows, "in")) continue;
+                acceptedRatings.Add(rating);
+                print($"ACCEPTED: {rating.X}");
             }
 
             resultText.text = "preparing an answer...";
             print("=== SUM ===");
-            var sum = await acceptedRatings.Select(rating => rating.X + rating.M + rating.A + rating.S).SumAsync();
+            var sum = acceptedRatings.Select(rating => rating.X + rating.M + rating.A + rating.S).Sum();
             print($"SUM: {sum}");
             resultText.text = $"{sum}";
         }
 
-        private async UniTask<(
+        private async Awaitable<(
             Dictionary<string, List<Step>>,
             List<Rating>
             )> Parse(string file)
@@ -241,7 +238,7 @@ namespace aoc2023
             return (workflows, ratings);
         }
 
-        private async UniTask<bool> IsAccepted(Rating rating, Dictionary<string, List<Step>> workflows,
+        private async Awaitable<bool> IsAccepted(Rating rating, Dictionary<string, List<Step>> workflows,
             string currentWorkflowId)
         {
             if (!workflows.TryGetValue(currentWorkflowId, out var steps)) return false;

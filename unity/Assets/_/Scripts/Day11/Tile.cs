@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace aoc2023.Day11
@@ -17,7 +17,7 @@ namespace aoc2023.Day11
             _spriteRenderer.color = new Color(.2f, .6f, 0.4f);
         }
 
-        public async UniTask Appear(float durationMillis)
+        public async Awaitable Appear(float durationMillis)
         {
             var initialColor = new Color(_spriteRenderer.color.r, _spriteRenderer.color.g, _spriteRenderer.color.b, 0);
             var targetColor = _spriteRenderer.color;
@@ -25,18 +25,18 @@ namespace aoc2023.Day11
             for (var t = 0f; t < durationMillis; t += Time.deltaTime * 1000f)
             {
                 _spriteRenderer.color = Color.Lerp(initialColor, targetColor, t / durationMillis);
-                await UniTask.Yield();
+                await Task.Yield();
             }
         }
 
-        public async UniTask Disappear(float durationMillis)
+        public async Awaitable Disappear(float durationMillis)
         {
             var initialColor = _spriteRenderer.color;
             var targetColor = new Color(_spriteRenderer.color.r, _spriteRenderer.color.g, _spriteRenderer.color.b, 0);
             for (var t = 0f; t < durationMillis; t += Time.deltaTime * 1000f)
             {
                 _spriteRenderer.color = Color.Lerp(initialColor, targetColor, t / durationMillis);
-                await UniTask.Yield();
+                await Task.Yield();
             }
 
             Destroy(gameObject);

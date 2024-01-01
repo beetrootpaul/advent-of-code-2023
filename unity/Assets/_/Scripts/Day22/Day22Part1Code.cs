@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -60,10 +60,10 @@ namespace aoc2023.Day22
                 Camera.main.transform.rotation
             );
 
-            await UniTask.Delay(2000);
+            await Task.Delay(2000);
             Day22Steps.Step2_SettleFall(bricks);
 
-            await UniTask.Delay(2000);
+            await Task.Delay(2000);
             Day22Steps.Step3_MarkSafeToDisintegrate(bricks);
 
             var result = Day22Steps.Step4_CountSafeToDisintegrate(bricks);
