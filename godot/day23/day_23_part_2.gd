@@ -34,10 +34,11 @@ const tile_size = Vector2i(16, 16)
 var forest_map: Array = []
 var start: Vector2i = Vector2i(1, 1)
 var end: Vector2i = Vector2i(1, 1)
-var visited_tiles: Array[Array] = []
 var max_lengths: Array[Array] = []
+var max_max_length: int = -1
 var started: bool = false
 var finished: bool = false
+var curr_visited_path: Array = []
 
 var computation: Thread
 
@@ -81,9 +82,9 @@ func _process(delta) -> void:
 	draw_tiles()
 	fit_tiles_in_camera()
 	if started:
-		result_text.text = str(max_lengths[end.y][end.x])
+		result_text.text = str(max_max_length) + "\n" + str(max_lengths[end.y][end.x])
 	if finished:
-		result_text.text += " DONE"
+		result_text.text += "\nDONE"
 
 
 func _exit_tree():
@@ -102,7 +103,9 @@ func draw_tiles() -> void:
 	for row in range(1, forest_map.size() - 1):
 		for col in range(1, forest_map[row].length() - 1):
 			var bg_tile = (
-				tiles.path_regular_marked if visited_tiles[row][col] else tiles.path_regular
+				tiles.path_regular_marked
+				if (Vector2i(col, row) in curr_visited_path)
+				else tiles.path_regular
 			)
 			var fg_tile = tiles.forest_nil
 			if forest_map[row][col] == "#":
@@ -140,12 +143,9 @@ func draw_tiles() -> void:
 
 func compute_longest_path() -> void:
 	for forest_row in forest_map:
-		var visited_row: Array[bool] = []
 		var max_lengths_row: Array[int] = []
 		for tile in forest_row:
-			visited_row.append(false)
 			max_lengths_row.append(-1)
-		visited_tiles.append(visited_row)
 		max_lengths.append(max_lengths_row)
 
 	#print_debug(forest_map.size() * forest_map[0].length())
@@ -164,15 +164,11 @@ func compute_longest_path() -> void:
 		var length = tmp[1]
 		var visited_path = tmp[2]
 
-		if max_lengths[xy.y][xy.x] > length + 1:
-			continue
-		max_lengths[xy.y][xy.x] = length + 1
+		curr_visited_path = visited_path
 
-		for row in visited_tiles.size():
-			for col in visited_tiles[row].size():
-				visited_tiles[row][col] = false
-		for v in visited_path:
-			visited_tiles[v.y][v.x] = true
+		max_lengths[xy.y][xy.x] = length
+		if xy == end:
+			max_max_length = max(max_max_length, length)
 
 		if chain % sync_computation_chain == 0:
 			await get_tree().create_timer(0.01).timeout
@@ -180,7 +176,7 @@ func compute_longest_path() -> void:
 
 		for direction in [Vector2i.RIGHT, Vector2i.DOWN, Vector2i.LEFT, Vector2i.UP]:
 			var next = xy + direction
-			if !visited_tiles[next.y][next.x] and forest_map[next.y][next.x] != "#":
+			if next not in visited_path and forest_map[next.y][next.x] != "#":
 				stack.push_back([next, length + 1, visited_path + [next]])
 
 	finished = true
