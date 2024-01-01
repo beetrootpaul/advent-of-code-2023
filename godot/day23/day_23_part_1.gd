@@ -6,21 +6,29 @@ extends Node2D
 enum InputFile { Example1, Puzzle1 }
 
 const tiles = {
-	"pathRegular": Vector2i(0, 3),
-	"pathSlopeEast": Vector2i(1, 3),
-	"pathSlopeSouth": Vector2i(2, 3),
 	"forestNil": Vector2i(0, 0),
 	"forestFull": Vector2i(1, 0),
+	#
 	"forestEdgesLeftRight": Vector2i(2, 0),
 	"forestEdgesTopBottom": Vector2i(3, 0),
+	#
 	"forestEdgesTopLeft": Vector2i(0, 1),
 	"forestEdgesTopRight": Vector2i(1, 1),
 	"forestEdgesBottomLeft": Vector2i(2, 1),
 	"forestEdgesBottomRight": Vector2i(3, 1),
+	#
 	"forestEdgesLeft": Vector2i(0, 2),
 	"forestEdgesTop": Vector2i(1, 2),
 	"forestEdgesRight": Vector2i(2, 2),
 	"forestEdgesBottom": Vector2i(3, 2),
+	#
+	"pathRegular": Vector2i(0, 3),
+	"pathSlopeEast": Vector2i(1, 3),
+	"pathSlopeSouth": Vector2i(2, 3),
+	#
+	"pathRegularMarked": Vector2i(3, 3),
+	"pathSlopeSouthMarked": Vector2i(0, 4),
+	"pathSlopeEastMarked": Vector2i(1, 4),
 }
 
 const tile_size = Vector2i(16, 16)
