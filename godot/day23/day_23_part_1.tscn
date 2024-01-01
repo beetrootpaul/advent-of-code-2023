@@ -9,7 +9,6 @@ default_font_size = 64
 [node name="day_23_part_1" type="Node2D" node_paths=PackedStringArray("tilemap")]
 script = ExtResource("1_lgqmo")
 tilemap = NodePath("TileMap")
-input_file = 1
 
 [node name="TileMap" type="TileMap" parent="."]
 scale = Vector2(4, 4)

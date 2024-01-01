@@ -101,12 +101,17 @@ func draw_tiles(forestMap: Array) -> void:
 
 
 func fit_tiles_in_camera():
-	var perfect_fit_scale = (
-		get_viewport_rect().size / Vector2(tilemap.get_used_rect().size * tile_size)
-	)
+	var viewport_rect: Vector2 = get_viewport_rect().size
+	var tilemap_rect: Vector2 = Vector2(tilemap.get_used_rect().size * tile_size)
+	var perfect_fit_scale = viewport_rect / tilemap_rect
 	#print_debug("perfect_fit_scale: ", perfect_fit_scale)
 	var ratio_preserving_scale = Vector2(
 		min(perfect_fit_scale.x, perfect_fit_scale.y), min(perfect_fit_scale.x, perfect_fit_scale.y)
 	)
 	#print_debug("ratio_preserving_scale: ", ratio_preserving_scale)
 	tilemap.scale = ratio_preserving_scale
+	tilemap_rect = tilemap_rect * tilemap.scale
+
+	tilemap.position = Vector2(
+		(viewport_rect.x - tilemap_rect.x) / 2, (viewport_rect.y - tilemap_rect.y) / 2
+	)
