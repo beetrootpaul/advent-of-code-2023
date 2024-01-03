@@ -700,10 +700,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <InputFile>k__BackingField: 1
+  <DelaysMillis>k__BackingField: 0
   <ResultText>k__BackingField: {fileID: 48592940}
   <ForestTilemap>k__BackingField: {fileID: 1255911447}
   <PathTilemap>k__BackingField: {fileID: 1366868193}
   <PathTile>k__BackingField: {fileID: 11400000, guid: 5b4a88a93be9b482f83d8d3ba27b5fba, type: 2}
+  <PathMarkedTile>k__BackingField: {fileID: 11400000, guid: 0050b2e63caa448a5b8f38d27a5c4b82, type: 2}
   <ForestFullTile>k__BackingField: {fileID: 11400000, guid: fba166a2e88c04b889b020c1029257b2, type: 2}
   <ForestTBTile>k__BackingField: {fileID: 11400000, guid: 928f4eec5d96f4d259e4e16f246e8d3d, type: 2}
   <ForestLRTile>k__BackingField: {fileID: 11400000, guid: a1bbfaec21fe84be496f9e169c5463ae, type: 2}

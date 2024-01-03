@@ -1,6 +1,8 @@
+ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -12,14 +14,15 @@ namespace aoc2023.day23
     //
     internal class Day23Part2Code : MonoBehaviour
     {
-        private enum Input
+        private enum InputData
         {
             Example,
             NonSquare,
             Puzzle
         }
 
-        [field: SerializeField] private Input InputFile { get; set; }
+        [field: SerializeField] private InputData InputFile { get; set; }
+        [field: SerializeField] private int DelaysMillis { get; set; }
 
         [field: SerializeField] private TextMeshProUGUI ResultText { get; set; }
         [field: SerializeField] private Tilemap ForestTilemap { get; set; }
@@ -45,28 +48,37 @@ namespace aoc2023.day23
         private Vector2Int _end = new(1, 0);
 
         private PathsGraph _pathsGraph = new();
+        private bool canHighlight;
 
         private Camera _camera;
 
-        private void Start()
+        private async void Start()
         {
             ResultText.text = "...";
             _camera = Camera.main;
 
             Parse(InputFile switch
             {
-                Input.Example => "day23/example2_in.txt",
-                Input.NonSquare => "day23/non_square_in.txt",
-                Input.Puzzle => "day23/puzzle2_in.txt",
+                InputData.Example => "day23/example2_in.txt",
+                InputData.NonSquare => "day23/non_square_in.txt",
+                InputData.Puzzle => "day23/puzzle2_in.txt",
                 _ => "NOT_SET"
             });
 
-            ConstructPathsGraph();
+            ResultText.text = "constructing a graph ...";
+            await ConstructPathsGraph();
+            ResultText.text = "the graph is ready";
+            canHighlight = true;
 
-            foreach (var step in _pathsGraph.SearchForLongestPath(_start, _end))
-            {
-                ResultText.text = $"max: {step.maxLengthSoFar}\nlast: {step.recentLength}";
-            }
+            // TODO
+            canHighlight = false;
+            // _pathsGraph.MarkEverythingNotVisited();
+            // foreach (var step in _pathsGraph.SearchForLongestPath(_start, _end))
+            // {
+            // print($"next length: max={step.maxLengthSoFar} last={step.recentLength}");
+            // ResultText.text = $"max: {step.maxLengthSoFar}\nlast: {step.recentLength}";
+            // }
+            canHighlight = true;
             ResultText.text += "\nDONE";
         }
 
@@ -74,6 +86,10 @@ namespace aoc2023.day23
         {
             DrawTiles();
             AdjustCameraToShowAllTiles();
+            if (canHighlight)
+            {
+                HighlightGraphPortionUnderCursor();
+            }
         }
 
         private void Parse(string inputFilePath)
@@ -93,11 +109,12 @@ namespace aoc2023.day23
             print(string.Join('\n', _tiles.Select(tilesRow => string.Join("", tilesRow))));
         }
 
-        private void ConstructPathsGraph()
+        private async Awaitable ConstructPathsGraph()
         {
             _pathsGraph = new PathsGraph();
 
             // Just in case domain reloading is turned off for a preview mode entering 
+            Joint.NextId = 1;
             Connection.NextId = 1;
 
             var visited = new List<List<bool>>();
@@ -111,17 +128,19 @@ namespace aoc2023.day23
                 visited.Add(visitedRow);
             }
 
-            var queue = new Queue<(Vector2Int prev, Vector2Int next)>();
-            queue.Enqueue((_start, _start));
-            while (queue.Count > 0)
+            var stack = new Stack<(Vector2Int prev, Vector2Int next)>();
+            stack.Push((_start, _start));
+            while (stack.Count > 0)
             {
-                var (prev, curr) = queue.Dequeue();
+                _pathsGraph.MarkEverythingNotVisited();
+
+                var (prev, curr) = stack.Pop();
                 if (visited[curr.y][curr.x])
                 {
                     continue;
                 }
 
-                print($"QUEUE step: {curr}  {visited[curr.y][curr.x]}");
+                // print($"QUEUE step: {curr}  {visited[curr.y][curr.x]}");
 
                 var adjacent = AdjacentPathTilesOf(curr).ToList();
 
@@ -136,11 +155,17 @@ namespace aoc2023.day23
                 }
 
                 _pathsGraph.Connect(prev, curr);
+                _pathsGraph.MarkAdjacentJointsAndConnectionsVisitedAt(curr);
 
                 visited[curr.y][curr.x] = true;
                 foreach (var a in adjacent)
                 {
-                    queue.Enqueue((curr, a));
+                    stack.Push((curr, a));
+                }
+
+                if (DelaysMillis > 0)
+                {
+                    await Task.Delay(DelaysMillis);
                 }
             }
 
@@ -224,6 +249,19 @@ namespace aoc2023.day23
                 new Vector3(tilemapSize.x * .5f, tilemapSize.y * .5f, _camera.transform.position.z),
                 _camera.transform.rotation
             );
+        }
+
+        private void HighlightGraphPortionUnderCursor()
+        {
+            _pathsGraph.MarkEverythingNotVisited();
+
+            var tileUnderCursor = PathTilemap.WorldToCell(_camera.ScreenToWorldPoint(Input.mousePosition));
+            var x = tileUnderCursor.x;
+            var y = _rows - tileUnderCursor.y - 1;
+            if (x >= 0 && y >= 0 && x < _cols && y < _rows)
+            {
+                _pathsGraph.MarkAdjacentJointsAndConnectionsVisitedAt(new Vector2Int(x, y));
+            }
         }
     }
 }
