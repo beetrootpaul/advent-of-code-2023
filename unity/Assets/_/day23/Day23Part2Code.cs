@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +25,7 @@ namespace aoc2023.day23
         [field: SerializeField] private Tilemap ForestTilemap { get; set; }
         [field: SerializeField] private Tilemap PathTilemap { get; set; }
         [field: SerializeField] private TileBase PathTile { get; set; }
+        [field: SerializeField] private TileBase PathMarkedTile { get; set; }
         [field: SerializeField] private TileBase ForestFullTile { get; set; }
         [field: SerializeField] private TileBase ForestTBTile { get; set; }
         [field: SerializeField] private TileBase ForestLRTile { get; set; }
@@ -60,9 +60,14 @@ namespace aoc2023.day23
                 Input.Puzzle => "day23/puzzle2_in.txt",
                 _ => "NOT_SET"
             });
+
             ConstructPathsGraph();
 
-            ResultText.text = "DONE";
+            foreach (var step in _pathsGraph.SearchForLongestPath(_start, _end))
+            {
+                ResultText.text = $"max: {step.maxLengthSoFar}\nlast: {step.recentLength}";
+            }
+            ResultText.text += "\nDONE";
         }
 
         private void Update()
@@ -120,7 +125,7 @@ namespace aoc2023.day23
 
                 var adjacent = AdjacentPathTilesOf(curr).ToList();
 
-                var isJoint = curr == _start || adjacent.Count() > 2;
+                var isJoint = curr == _start || curr == _end || adjacent.Count() > 2;
                 if (isJoint)
                 {
                     _pathsGraph.RecordJointAt(curr);
@@ -175,7 +180,8 @@ namespace aoc2023.day23
                 {
                     var tilemapXy = new Vector3Int(col, _rows - row - 1);
 
-                    PathTilemap.SetTile(tilemapXy, PathTile);
+                    PathTilemap.SetTile(tilemapXy,
+                        _pathsGraph.IsVisited(new Vector2Int(col, row)) ? PathMarkedTile : PathTile);
 
                     if (_tiles[row][col] == '#')
                     {
