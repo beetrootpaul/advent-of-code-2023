@@ -1,16 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace aoc2023.Day23
+namespace aoc2023.day23
 {
     //
     // https://adventofcode.com/2023/day/23
     //
-    public class Day23Part2Code : MonoBehaviour
+    internal class Day23Part2Code : MonoBehaviour
     {
         private enum Input
         {
@@ -18,6 +19,8 @@ namespace aoc2023.Day23
             NonSquare,
             Puzzle
         }
+
+        [field: SerializeField] private Input InputFile { get; set; }
 
         [field: SerializeField] private TextMeshProUGUI ResultText { get; set; }
         [field: SerializeField] private Tilemap ForestTilemap { get; set; }
@@ -35,11 +38,13 @@ namespace aoc2023.Day23
         [field: SerializeField] private TileBase ForestLTile { get; set; }
         [field: SerializeField] private TileBase ForestRTile { get; set; }
 
-        [field: SerializeField] private Input InputFile { get; set; }
-
         private char[][] _tiles = { };
         private int _rows = 1;
         private int _cols = 1;
+        private Vector2Int _start = new(1, 0);
+        private Vector2Int _end = new(1, 0);
+
+        private PathsGraph _pathsGraph = new();
 
         private Camera _camera;
 
@@ -55,6 +60,7 @@ namespace aoc2023.Day23
                 Input.Puzzle => "day23/puzzle2_in.txt",
                 _ => "NOT_SET"
             });
+            ConstructPathsGraph();
 
             ResultText.text = "DONE";
         }
@@ -75,7 +81,87 @@ namespace aoc2023.Day23
                 .ToArray();
             _rows = _tiles.Length;
             _cols = _tiles[0].Length;
+
+            _start = new Vector2Int(1, 0);
+            _end = new Vector2Int(_cols - 2, _rows - 1);
+
             print(string.Join('\n', _tiles.Select(tilesRow => string.Join("", tilesRow))));
+        }
+
+        private void ConstructPathsGraph()
+        {
+            _pathsGraph = new PathsGraph();
+
+            // Just in case domain reloading is turned off for a preview mode entering 
+            Connection.NextId = 1;
+
+            var visited = new List<List<bool>>();
+            for (var row = 0; row < _rows; row++)
+            {
+                var visitedRow = new List<bool>();
+                for (var col = 0; col < _cols; col++)
+                {
+                    visitedRow.Add(false);
+                }
+                visited.Add(visitedRow);
+            }
+
+            var queue = new Queue<(Vector2Int prev, Vector2Int next)>();
+            queue.Enqueue((_start, _start));
+            while (queue.Count > 0)
+            {
+                var (prev, curr) = queue.Dequeue();
+                if (visited[curr.y][curr.x])
+                {
+                    continue;
+                }
+
+                print($"QUEUE step: {curr}  {visited[curr.y][curr.x]}");
+
+                var adjacent = AdjacentPathTilesOf(curr).ToList();
+
+                var isJoint = curr == _start || adjacent.Count() > 2;
+                if (isJoint)
+                {
+                    _pathsGraph.RecordJointAt(curr);
+                }
+                else
+                {
+                    _pathsGraph.RecordConnectionAt(curr);
+                }
+
+                _pathsGraph.Connect(prev, curr);
+
+                visited[curr.y][curr.x] = true;
+                foreach (var a in adjacent)
+                {
+                    queue.Enqueue((curr, a));
+                }
+            }
+
+            _pathsGraph.Log();
+        }
+
+        private IEnumerable<Vector2Int> AdjacentPathTilesOf(Vector2Int tile)
+        {
+            var adjacent = new List<Vector2Int>();
+            if (tile.x > 0 && _tiles[tile.y][tile.x - 1] != '#')
+            {
+                adjacent.Add(new Vector2Int(tile.x - 1, tile.y));
+            }
+            if (tile.y > 0 && _tiles[tile.y - 1][tile.x] != '#')
+            {
+                adjacent.Add(new Vector2Int(tile.x, tile.y - 1));
+            }
+            if (tile.x < _cols - 1 && _tiles[tile.y][tile.x + 1] != '#')
+            {
+                adjacent.Add(new Vector2Int(tile.x + 1, tile.y));
+            }
+            if (tile.y < _rows - 1 && _tiles[tile.y + 1][tile.x] != '#')
+            {
+                adjacent.Add(new Vector2Int(tile.x, tile.y + 1));
+            }
+            return adjacent;
         }
 
         private void DrawTiles()

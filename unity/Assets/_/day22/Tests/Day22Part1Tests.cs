@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UnityEngine;
 using static UnityEngine.Application;
 
-namespace aoc2023.Day22
+namespace aoc2023.day22
 {
     public class Day22Part1Tests
     {

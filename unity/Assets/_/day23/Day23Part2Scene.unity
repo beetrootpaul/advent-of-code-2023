@@ -699,6 +699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f125cedb92ae7459cb63a1c3233dc5b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <InputFile>k__BackingField: 1
   <ResultText>k__BackingField: {fileID: 48592940}
   <ForestTilemap>k__BackingField: {fileID: 1255911447}
   <PathTilemap>k__BackingField: {fileID: 1366868193}
@@ -714,7 +715,6 @@ MonoBehaviour:
   <ForestBTile>k__BackingField: {fileID: 11400000, guid: 452254856c12340bab4f85502d5469aa, type: 2}
   <ForestLTile>k__BackingField: {fileID: 11400000, guid: 1e93d1706402e4bfdb207f48dca44b1e, type: 2}
   <ForestRTile>k__BackingField: {fileID: 11400000, guid: f4480ee9af9924520ad2023cb82c4c97, type: 2}
-  <InputFile>k__BackingField: 0
 --- !u!1 &1122081740
 GameObject:
   m_ObjectHideFlags: 0
