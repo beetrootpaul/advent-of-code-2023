@@ -367,7 +367,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.029681386, g: 0.124532744, b: 0.2735849, a: 0}
+  m_BackGroundColor: {r: 0.53333336, g: 0.45882353, b: 0.5137255, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -417,7 +417,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 8.19, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -700,6 +700,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ResultText>k__BackingField: {fileID: 48592940}
+  <ForestTilemap>k__BackingField: {fileID: 1255911447}
+  <PathTilemap>k__BackingField: {fileID: 1366868193}
+  <PathTile>k__BackingField: {fileID: 11400000, guid: 5b4a88a93be9b482f83d8d3ba27b5fba, type: 2}
+  <ForestFullTile>k__BackingField: {fileID: 11400000, guid: fba166a2e88c04b889b020c1029257b2, type: 2}
+  <ForestTBTile>k__BackingField: {fileID: 11400000, guid: 928f4eec5d96f4d259e4e16f246e8d3d, type: 2}
+  <ForestLRTile>k__BackingField: {fileID: 11400000, guid: a1bbfaec21fe84be496f9e169c5463ae, type: 2}
+  <ForestTLTile>k__BackingField: {fileID: 11400000, guid: a7c54a0ea40fc478eaf29edb47b6649b, type: 2}
+  <ForestTRTile>k__BackingField: {fileID: 11400000, guid: 3bec8b0f6c113481eb436325f3c31706, type: 2}
+  <ForestBLTile>k__BackingField: {fileID: 11400000, guid: 984be62e91822451a8219def321011aa, type: 2}
+  <ForestBRTile>k__BackingField: {fileID: 11400000, guid: 7bc56509ec5be4bc09d9ea4bafd3e39a, type: 2}
+  <ForestTTile>k__BackingField: {fileID: 11400000, guid: b609d91d36fda49f280a787f09d5e871, type: 2}
+  <ForestBTile>k__BackingField: {fileID: 11400000, guid: 452254856c12340bab4f85502d5469aa, type: 2}
+  <ForestLTile>k__BackingField: {fileID: 11400000, guid: 1e93d1706402e4bfdb207f48dca44b1e, type: 2}
+  <ForestRTile>k__BackingField: {fileID: 11400000, guid: f4480ee9af9924520ad2023cb82c4c97, type: 2}
   <InputFile>k__BackingField: 0
 --- !u!1 &1122081740
 GameObject:

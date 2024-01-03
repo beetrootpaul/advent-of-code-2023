@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -14,6 +15,7 @@ namespace aoc2023.Day23
         private enum Input
         {
             Example,
+            NonSquare,
             Puzzle
         }
 
@@ -39,20 +41,28 @@ namespace aoc2023.Day23
         private int _rows = 1;
         private int _cols = 1;
 
+        private Camera _camera;
+
         private void Start()
         {
             ResultText.text = "...";
+            _camera = Camera.main;
 
             Parse(InputFile switch
             {
                 Input.Example => "day23/example2_in.txt",
+                Input.NonSquare => "day23/non_square_in.txt",
                 Input.Puzzle => "day23/puzzle2_in.txt",
                 _ => "NOT_SET"
             });
 
-            DrawTiles();
-
             ResultText.text = "DONE";
+        }
+
+        private void Update()
+        {
+            DrawTiles();
+            AdjustCameraToShowAllTiles();
         }
 
         private void Parse(string inputFilePath)
@@ -110,6 +120,18 @@ namespace aoc2023.Day23
                     }
                 }
             }
+        }
+
+        private void AdjustCameraToShowAllTiles()
+        {
+            var tilemapSize = PathTilemap.layoutGrid.cellSize * new Vector2(_cols, _rows);
+            _camera.orthographicSize = (tilemapSize.x > tilemapSize.y * _camera.aspect)
+                ? (tilemapSize.x * .5f / _camera.aspect)
+                : (tilemapSize.y * .5f);
+            _camera.transform.SetPositionAndRotation(
+                new Vector3(tilemapSize.x * .5f, tilemapSize.y * .5f, _camera.transform.position.z),
+                _camera.transform.rotation
+            );
         }
     }
 }
