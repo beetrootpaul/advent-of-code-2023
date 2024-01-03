@@ -1,8 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -118,7 +117,7 @@ namespace aoc2023.day23
             print(string.Join('\n', _tiles.Select(tilesRow => string.Join("", tilesRow))));
         }
 
-        private async Awaitable ConstructPathsGraph()
+        private async UniTask ConstructPathsGraph()
         {
             _pathsGraph = new PathsGraph();
 
@@ -150,6 +149,7 @@ namespace aoc2023.day23
                 var (prev, curr) = stack.Pop();
                 if (visited[curr.y][curr.x])
                 {
+                    _pathsGraph.Connect(prev, curr);
                     continue;
                 }
 
@@ -178,7 +178,8 @@ namespace aoc2023.day23
 
                 if (_yieldConstructionSteps > 0 && counter % _yieldConstructionSteps == 0)
                 {
-                    await Task.Delay(25);
+                    print($"... graph construction still running (counter={counter})");
+                    await UniTask.Delay(25);
                 }
             }
 
