@@ -145,7 +145,7 @@ namespace aoc2023.day23
             }
             else
             {
-                Debug.Log($"search between {j1.Xy} and {j2.Xy} ...");
+                // Debug.Log($"search between {j1.Xy} and {j2.Xy} ...");
 
                 var maxLengthSoFar = 0;
 

@@ -63,7 +63,7 @@ namespace aoc2023.day23
             {
                 InputData.Example => 5,
                 InputData.NonSquare => 3,
-                InputData.Puzzle => 5_000,
+                InputData.Puzzle => 50_000,
                 _ => 10
             };
             _yieldSearchSteps = InputFile switch
@@ -99,7 +99,7 @@ namespace aoc2023.day23
 
                 if (step.reachedEnd)
                 {
-                    print($"next length: max={step.maxLengthSoFar} last={step.recentLength}");
+                    // print($"next length: max={step.maxLengthSoFar} last={step.recentLength}");
                     ResultText.text =
                         $"max: {step.maxLengthSoFar}\nlast: {step.recentLength}";
                 }
