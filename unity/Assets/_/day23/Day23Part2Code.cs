@@ -1,4 +1,4 @@
- using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,7 +22,6 @@ namespace aoc2023.day23
         }
 
         [field: SerializeField] private InputData InputFile { get; set; }
-        [field: SerializeField] private int DelaysMillis { get; set; }
 
         [field: SerializeField] private TextMeshProUGUI ResultText { get; set; }
         [field: SerializeField] private Tilemap ForestTilemap { get; set; }
@@ -41,6 +40,8 @@ namespace aoc2023.day23
         [field: SerializeField] private TileBase ForestLTile { get; set; }
         [field: SerializeField] private TileBase ForestRTile { get; set; }
 
+        private Camera _camera;
+
         private char[][] _tiles = { };
         private int _rows = 1;
         private int _cols = 1;
@@ -50,12 +51,20 @@ namespace aoc2023.day23
         private PathsGraph _pathsGraph = new();
         private bool canHighlight;
 
-        private Camera _camera;
+        private int _yieldConstructionSteps;
 
         private async void Start()
         {
             ResultText.text = "...";
             _camera = Camera.main;
+
+            _yieldConstructionSteps = InputFile switch
+            {
+                InputData.Example => 5,
+                InputData.NonSquare => 3,
+                InputData.Puzzle => 500,
+                _ => 10
+            };
 
             Parse(InputFile switch
             {
@@ -117,6 +126,8 @@ namespace aoc2023.day23
             Joint.NextId = 1;
             Connection.NextId = 1;
 
+            var counter = 0;
+
             var visited = new List<List<bool>>();
             for (var row = 0; row < _rows; row++)
             {
@@ -132,6 +143,8 @@ namespace aoc2023.day23
             stack.Push((_start, _start));
             while (stack.Count > 0)
             {
+                counter++;
+
                 _pathsGraph.MarkEverythingNotVisited();
 
                 var (prev, curr) = stack.Pop();
@@ -163,9 +176,9 @@ namespace aoc2023.day23
                     stack.Push((curr, a));
                 }
 
-                if (DelaysMillis > 0)
+                if (_yieldConstructionSteps > 0 && counter % _yieldConstructionSteps == 0)
                 {
-                    await Task.Delay(DelaysMillis);
+                    await Task.Delay(25);
                 }
             }
 
