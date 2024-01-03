@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Codice.Client.BaseCommands;
-using GluonGui.Dialog;
 using UnityEngine;
 
 namespace aoc2023.day23
@@ -116,7 +114,8 @@ namespace aoc2023.day23
             }
         }
 
-        internal IEnumerable<(int recentLength, int maxLengthSoFar)> SearchForLongestPath(Vector2Int start,
+        internal IEnumerable<(int recentLength, int maxLengthSoFar, bool reachedEnd)> SearchForLongestPath(
+            Vector2Int start,
             Vector2Int end)
         {
             if (!_joints.TryGetValue(start, out var j1))
@@ -132,46 +131,49 @@ namespace aoc2023.day23
                     $"Tried to search for the longest path to a non-joint {end}");
             }
 
-            foreach (var result in SearchForLongestPathBetween(j1, j2))
-            {
-                yield return result;
-            }
+            return SearchForLongestPathBetween(j1, j2);
         }
 
-        private IEnumerable<(int recentLength, int maxLengthSoFar)> SearchForLongestPathBetween(Joint j1, Joint j2)
+        private IEnumerable<(int recentLength, int maxLengthSoFar, bool reachedEnd)> SearchForLongestPathBetween(
+            Joint j1, Joint j2)
         {
             if (j1 == j2)
             {
-                yield return (0, 0);
+                j1.Visited = true;
+                yield return (0, 0, true);
+                j1.Visited = false;
             }
-
-            Debug.Log($"search between {j1.Xy} and {j2.Xy} ...");
-
-            var maxLengthSoFar = 0;
-
-            var hasProgressAnyFurther = false;
-
-            j1.Visited = true;
-            foreach (var c in j1.Connections.Where(c => !c.Visited))
+            else
             {
-                c.Visited = true;
-                foreach (var jNext in c.Joints.Where(j => !j.Visited))
+                Debug.Log($"search between {j1.Xy} and {j2.Xy} ...");
+
+                var maxLengthSoFar = 0;
+
+                var hasProgressAnyFurther = false;
+
+                j1.Visited = true;
+                foreach (var c in j1.Connections.Where(c => !c.Visited))
                 {
-                    var lengthToAdd = 1 + c.Xys.Count;
-                    foreach (var next in SearchForLongestPathBetween(jNext, j2))
+                    c.Visited = true;
+                    foreach (var jNext in c.Joints.Where(j => !j.Visited))
                     {
-                        hasProgressAnyFurther = true;
-                        maxLengthSoFar = Math.Max(maxLengthSoFar, next.maxLengthSoFar + lengthToAdd);
-                        yield return (next.recentLength + lengthToAdd, maxLengthSoFar);
+                        var lengthToAdd = 1 + c.Xys.Count;
+                        foreach (var next in SearchForLongestPathBetween(jNext, j2))
+                        {
+                            hasProgressAnyFurther = true;
+                            maxLengthSoFar = Math.Max(maxLengthSoFar, next.maxLengthSoFar + lengthToAdd);
+                            yield return (next.recentLength + lengthToAdd, maxLengthSoFar, next.reachedEnd);
+                        }
                     }
+                    c.Visited = false;
                 }
-                c.Visited = false;
-            }
-            j1.Visited = false;
+                j1.Visited = false;
 
-            if (!hasProgressAnyFurther)
-            {
-                throw new Exception("PROBLEM");
+                if (!hasProgressAnyFurther)
+                {
+                    // dead end
+                    yield return (-999_999, -999_999, false);
+                }
             }
         }
 

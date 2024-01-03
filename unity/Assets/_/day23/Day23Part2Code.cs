@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,6 +52,7 @@ namespace aoc2023.day23
         private bool canHighlight;
 
         private int _yieldConstructionSteps;
+        private int _yieldSearchSteps;
 
         private async void Start()
         {
@@ -61,8 +63,15 @@ namespace aoc2023.day23
             {
                 InputData.Example => 5,
                 InputData.NonSquare => 3,
-                InputData.Puzzle => 500,
+                InputData.Puzzle => 5_000,
                 _ => 10
+            };
+            _yieldSearchSteps = InputFile switch
+            {
+                InputData.Example => 1,
+                InputData.NonSquare => 1,
+                InputData.Puzzle => 25,
+                _ => 1
             };
 
             Parse(InputFile switch
@@ -78,14 +87,28 @@ namespace aoc2023.day23
             ResultText.text = "the graph is ready";
             canHighlight = true;
 
-            // TODO
             canHighlight = false;
-            // _pathsGraph.MarkEverythingNotVisited();
-            // foreach (var step in _pathsGraph.SearchForLongestPath(_start, _end))
-            // {
-            // print($"next length: max={step.maxLengthSoFar} last={step.recentLength}");
-            // ResultText.text = $"max: {step.maxLengthSoFar}\nlast: {step.recentLength}";
-            // }
+            _pathsGraph.MarkEverythingNotVisited();
+            var counter = 0;
+            var result = -1;
+            foreach (var step in _pathsGraph.SearchForLongestPath(_start, _end))
+            {
+                counter++;
+
+                result = Math.Max(result, step.maxLengthSoFar);
+
+                if (step.reachedEnd)
+                {
+                    print($"next length: max={step.maxLengthSoFar} last={step.recentLength}");
+                    ResultText.text =
+                        $"max: {step.maxLengthSoFar}\nlast: {step.recentLength}";
+                }
+
+                if (_yieldSearchSteps > 0 && counter % _yieldSearchSteps == 0)
+                {
+                    await UniTask.Delay(25);
+                }
+            }
             canHighlight = true;
             ResultText.text += "\nDONE";
         }
