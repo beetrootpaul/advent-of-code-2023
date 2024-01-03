@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace aoc2023.day22
+namespace aoc2023.Day22
 {
     public class Brick : MonoBehaviour
     {

@@ -7,10 +7,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace aoc2023.day23
+namespace aoc2023.Day23
 {
     //
+    // Day 23: A Long Walk
     // https://adventofcode.com/2023/day/23
+    //
+    // part 2
     //
     internal class Day23Part2Code : MonoBehaviour
     {

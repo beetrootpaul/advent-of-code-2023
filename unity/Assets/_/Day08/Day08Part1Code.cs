@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.day08
+namespace aoc2023.Day08
 {
     //
+    // Day 8: Haunted Wasteland
     // https://adventofcode.com/2023/day/8
+    //
+    // part 1
     //
     public class Day08Part1Code : MonoBehaviour
     {

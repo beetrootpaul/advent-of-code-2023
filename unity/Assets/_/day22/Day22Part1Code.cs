@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.day22
+namespace aoc2023.Day22
 {
     //
+    // Day 22: Sand Slabs
     // https://adventofcode.com/2023/day/22
+    //
+    // part 1
     //
     public class Day22Part1Code : MonoBehaviour
     {

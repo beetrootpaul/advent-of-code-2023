@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.day10
+namespace aoc2023.Day10
 {
     //
     // https://adventofcode.com/2023/day/10

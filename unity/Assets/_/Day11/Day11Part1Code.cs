@@ -9,10 +9,13 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace aoc2023.day11
+namespace aoc2023.Day11
 {
     //
+    // Day 11: Cosmic Expansion
     // https://adventofcode.com/2023/day/11
+    //
+    // part 1
     //
     public class Day11Part1Code : MonoBehaviour
     {

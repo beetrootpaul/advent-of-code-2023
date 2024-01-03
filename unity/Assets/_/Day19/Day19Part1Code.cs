@@ -5,7 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.day19
+namespace aoc2023.Day19
 {
     internal struct Rating
     {
@@ -40,7 +40,10 @@ namespace aoc2023.day19
     }
 
     //
+    // Day 19: Aplenty
     // https://adventofcode.com/2023/day/19
+    //
+    // part 1
     //
     public class Day19Part1Code : MonoBehaviour
     {

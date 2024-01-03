@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace aoc2023.day11
+namespace aoc2023.Day11
 {
     public class Tile : MonoBehaviour
     {

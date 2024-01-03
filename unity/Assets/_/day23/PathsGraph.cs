@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace aoc2023.day23
+namespace aoc2023.Day23
 {
     internal class PathsGraph
     {

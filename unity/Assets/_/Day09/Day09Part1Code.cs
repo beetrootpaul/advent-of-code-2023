@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace aoc2023.day09
+namespace aoc2023.Day09
 {
     //
+    // Day 9: Mirage Maintenance
     // https://adventofcode.com/2023/day/9
+    //
+    // part 1
     //
     public class Day09Part1Code : MonoBehaviour
     {
