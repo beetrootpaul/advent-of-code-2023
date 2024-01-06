@@ -622,7 +622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f22341acd7ae74956a8813a6e90804bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputData: 0
+  inputData: 6
   guiText: {fileID: 48592940}
 --- !u!1 &1122081740
 GameObject:
