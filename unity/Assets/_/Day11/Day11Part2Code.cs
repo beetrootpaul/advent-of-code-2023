@@ -11,7 +11,7 @@ namespace aoc2023.Day11
     // Day 11: Cosmic Expansion
     // https://adventofcode.com/2023/day/11
     //
-    // part 1
+    // part 2
     //
     internal class Day11Part2Code : MonoBehaviour
     {
