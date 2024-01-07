@@ -53,9 +53,11 @@ namespace aoc2023.Day19
             Puzzle1
         }
 
-        [SerializeField] private TextMeshProUGUI? resultText;
+        [SerializeField]
+        private TextMeshProUGUI? resultText;
 
-        [SerializeField] private Input inputFile;
+        [SerializeField]
+        private Input inputFile;
 
         private async void Start()
         {
