@@ -8,5 +8,15 @@ namespace aoc2023.Day19
         internal string Destination = "R";
 
         internal bool IsConditional => ConditionCategory != Category.None;
+
+        public override string ToString()
+        {
+            return (
+                       IsConditional
+                           ? $"{ConditionCategory}{(ConditionLowerThan ? '<' : '>')}{ConditionValue}:"
+                           : ""
+                   ) +
+                   Destination;
+        }
     }
 }

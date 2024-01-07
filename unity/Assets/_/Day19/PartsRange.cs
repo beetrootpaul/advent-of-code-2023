@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace aoc2023.Day19
 {
@@ -20,10 +21,14 @@ namespace aoc2023.Day19
 
         internal IEnumerable<PartsRange> SplitOn(WorkflowStep step)
         {
+            Debug.Log($"Trying to split {this} on {step}");
             if (!step.IsConditional)
             {
                 Destination = step.Destination;
                 NextStepNumberWithinWorkflow = 0;
+
+                Debug.Log($"no split");
+
                 yield return this;
             }
             else
@@ -73,12 +78,16 @@ namespace aoc2023.Day19
                 other.ThrowIfInvalid();
                 ThrowIfInvalid();
 
+                Debug.Log($"split into:");
+
                 if (!other.IsEmpty())
                 {
+                    Debug.Log(other);
                     yield return other;
                 }
                 if (!IsEmpty())
                 {
+                    Debug.Log(this);
                     yield return this;
                 }
             }

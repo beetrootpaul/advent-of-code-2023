@@ -39,20 +39,15 @@ namespace aoc2023.Day19
                 print($":: {workflow.Key} ::");
                 foreach (var step in workflow.Value)
                 {
-                    print(
-                        (
-                            step.IsConditional
-                                ? $"{step.ConditionCategory}{(step.ConditionLowerThan ? '<' : '>')}{step.ConditionValue}:"
-                                : ""
-                        ) +
-                        step.Destination
-                    );
+                    print(step);
                 }
             }
 
             print("<color=yellow>=== COMPUTE ===</color>");
             var ranges = ComputePartRangesFor(workflows)
                 .ToList();
+
+            print("<color=yellow>=== RANGES ===</color>");
             foreach (var range in ranges)
             {
                 var sb = new StringBuilder();
@@ -147,7 +142,7 @@ namespace aoc2023.Day19
                 {
                     if (subrange.Destination is "A" or "R")
                     {
-                        processedRanges.Add(range);
+                        processedRanges.Add(subrange);
                     }
                     else
                     {
