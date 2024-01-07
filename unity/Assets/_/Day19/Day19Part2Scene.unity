@@ -176,7 +176,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: < Day 19 Part 1 >
+  m_text: < Day 19 Part 2 >
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -619,11 +619,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 983334285}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33f23d3b5798f490288b7d75780b6d7f, type: 3}
+  m_Script: {fileID: 11500000, guid: 637b6961784714c25840bade08130d33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resultText: {fileID: 48592940}
-  inputFile: 0
+  inputData: 0
+  guiText: {fileID: 48592940}
 --- !u!1 &1122081740
 GameObject:
   m_ObjectHideFlags: 0
