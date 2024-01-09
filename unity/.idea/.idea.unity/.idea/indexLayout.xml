@@ -3,6 +3,19 @@
   <component name="UserContentModel">
     <attachedFolders />
     <explicitIncludes />
-    <explicitExcludes />
+    <explicitExcludes>
+      <Path>Assembly-CSharp.csproj</Path>
+      <Path>Day07.csproj</Path>
+      <Path>Day07Tests.csproj</Path>
+      <Path>Day08.csproj</Path>
+      <Path>Day09.csproj</Path>
+      <Path>Day10.csproj</Path>
+      <Path>Day11.csproj</Path>
+      <Path>Day17.csproj</Path>
+      <Path>Day19.csproj</Path>
+      <Path>Day22Tests.csproj</Path>
+      <Path>Day23.csproj</Path>
+      <Path>day22.csproj</Path>
+    </explicitExcludes>
   </component>
 </project>
