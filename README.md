@@ -6,7 +6,7 @@ This repo contains solutions in three tech stacks:
 
 - in [cpp direcotry](cpp/) you can find a C++ project with C++ code
 - in [go direcotry](go/) you can find a Go project with Go code
-- in [godot direcotry](godot/) you can find a Godot project with GDScript code
+- in [godot direcotry](godot/) you can find a Godot project with GDScript & C# code
 - in [monogame directory](monogame/) you can find a MonoGame/Rider project with C# code
 - in [unity directory](unity/) you can find a Unity/Rider project with C# code
 
