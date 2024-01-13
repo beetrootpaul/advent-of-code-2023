@@ -5,5 +5,13 @@
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'ios' ">net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>GodotAoC2023</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>12</LangVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="day21\example1_in.txt" />
+    <Content Include="day21\example1_out.txt" />
+    <Content Include="day21\puzzle1_in.txt" />
+    <Content Include="day21\puzzle1_out.txt" />
+  </ItemGroup>
 </Project>
