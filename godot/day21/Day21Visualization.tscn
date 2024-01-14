@@ -1,10 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://cstvfvcmm3wr6"]
+[gd_scene load_steps=3 format=3 uid="uid://cstvfvcmm3wr6"]
 
 [ext_resource type="TileSet" uid="uid://cw6b7nk8hyy2l" path="res://day21/day21_tileset.tres" id="1_21id0"]
+[ext_resource type="Script" path="res://day21/Day21Visualization.cs" id="1_g4pkn"]
 
-[node name="Day21Visualization" type="Node2D"]
+[node name="Day21Visualization" type="Node2D" node_paths=PackedStringArray("_tileMap")]
+script = ExtResource("1_g4pkn")
+_tileMap = NodePath("TileMap")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = ExtResource("1_21id0")
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 65536, 0, 1, 65536, 0, 2, 65536, 0, 65538, 131072, 0, 65537, 131072, 0, 65536, 65536, 0, 131072, 65536, 0, 131073, 65536, 0, 131074, 262144, 0, 131075, 65536, 0, 131076, 65536, 0, 65539, 131072, 0, 3, 65536, 0, 65540, 65536, 0, 196612, 196608, 0, 196611, 65536, 0, 196610, 65536, 0, 196609, 65536, 0, 196608, 65536, 0, 4, 65536, 0)
+layer_0/tile_data = PackedInt32Array(1, 65536, 0, 2, 65536, 0, 65538, 131072, 0, 65537, 131072, 0, 131072, 65536, 0, 131073, 65536, 0, 131074, 262144, 0, 131075, 65536, 0, 65539, 131072, 0, 3, 65536, 0, 196612, 196608, 0, 196611, 65536, 0, 196610, 65536, 0, 196609, 65536, 0, 196608, 65536, 0, 4, 327680, 0, 262144, 131072, 0, 262145, 131072, 0, 262146, 131072, 0, 262147, 131072, 0, 262148, 131072, 0, -65534, 327680, 0, -65535, 65536, 0, -1, 327680, 0, 196607, 65536, 0, 131071, 65536, 0, 65535, 65536, 0, -65533, 327680, 0, 65536, 65536, 0, 0, 65536, 0, -65536, 65536, 0, -65532, 327680, 0)
