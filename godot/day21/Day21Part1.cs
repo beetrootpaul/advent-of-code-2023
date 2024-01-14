@@ -21,6 +21,8 @@ internal partial class Day21Part1 : Node
 
     public override void _Ready()
     {
+        Input.ParseInputEvent(new InputEventAction { Action = "cycle_debug_menu", Pressed = true });
+
         _hud?.SetText("...");
 
         var rawInputData = FileAccess.Open(_myInputFile switch
@@ -30,7 +32,7 @@ internal partial class Day21Part1 : Node
             _ => "NOT_SET"
         }, FileAccess.ModeFlags.Read).GetAsText();
         GD.Print(rawInputData);
-        
+
         _hud?.SetText(rawInputData);
     }
 
