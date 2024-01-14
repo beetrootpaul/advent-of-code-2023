@@ -5,25 +5,14 @@ namespace AoC2023.Day21;
 
 internal partial class Day21MainCamera : Camera2D
 {
-    [Export]
-    private Day21Visualization? _visualization;
-
-    public override void _Ready()
+    internal void AdjustZoomToContent(Rect2I contentRect)
     {
-        AdjustZoomToVisualization();
-    }
-
-    private void AdjustZoomToVisualization()
-    {
-        if (_visualization == null) return;
-
         var viewportRect = GetViewportRect();
-        var visualizationRect = _visualization.GetRect();
         GD.Print("[MainCamera] viewport rect: ", viewportRect);
-        GD.Print("[MainCamera] visualization rect: ", visualizationRect);
+        GD.Print("[MainCamera] content rect: ", contentRect);
 
         var stretchZoom =
-            viewportRect.Size / visualizationRect.Size;
+            viewportRect.Size / contentRect.Size;
         GD.Print("[MainCamera] stretch zoom: ", stretchZoom);
 
         var aspectPreservingZoom = new Vector2(
@@ -36,9 +25,9 @@ internal partial class Day21MainCamera : Camera2D
 
         Transform =
             Transform.Translated(
-                visualizationRect.Position -
+                contentRect.Position -
                 (viewportRect.Size / aspectPreservingZoom -
-                 visualizationRect.Size) / 2
+                 contentRect.Size) / 2
             );
     }
 }

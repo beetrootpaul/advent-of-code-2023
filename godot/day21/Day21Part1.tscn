@@ -5,15 +5,16 @@
 [ext_resource type="PackedScene" uid="uid://cstvfvcmm3wr6" path="res://day21/Day21Visualization.tscn" id="3_et7as"]
 [ext_resource type="Script" path="res://day21/Day21MainCamera.cs" id="4_7imyt"]
 
-[node name="Day21Part1" type="Node" node_paths=PackedStringArray("_hud")]
+[node name="Day21Part1" type="Node" node_paths=PackedStringArray("_hud", "_visualization", "_mainCamera")]
 script = ExtResource("1_44khm")
 _hud = NodePath("Hud")
+_visualization = NodePath("Visualization")
+_mainCamera = NodePath("MainCamera")
 
 [node name="Hud" parent="." instance=ExtResource("2_wvrjp")]
 
 [node name="Visualization" parent="." instance=ExtResource("3_et7as")]
 
-[node name="MainCamera" type="Camera2D" parent="." node_paths=PackedStringArray("_visualization")]
+[node name="MainCamera" type="Camera2D" parent="."]
 anchor_mode = 0
 script = ExtResource("4_7imyt")
-_visualization = NodePath("../Visualization")

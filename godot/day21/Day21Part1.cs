@@ -20,6 +20,12 @@ internal partial class Day21Part1 : Node
     [Export]
     private Day21Hud? _hud;
 
+    [Export]
+    private Day21Visualization? _visualization;
+
+    [Export]
+    private Day21MainCamera? _mainCamera;
+
     private Vector2I _size;
     private Vector2I _start;
     private bool[][] _rocks;
@@ -39,17 +45,17 @@ internal partial class Day21Part1 : Node
         });
         GD.Print(_start);
 
-        _hud?.SetText(_start.ToString());
+        _visualization?.Visualize(_rocks, _start);
+
+        if (_mainCamera != null && _visualization != null)
+        {
+            _mainCamera.AdjustZoomToContent(_visualization.GetRect());
+        }
     }
 
     private void Parse(string inputFile)
     {
-        var rawInputData = FileAccess.Open(_myInputFile switch
-            {
-                InputFile.Example => "day21/example1_in.txt",
-                InputFile.Puzzle => "day21/puzzle1_in.txt",
-                _ => "NOT_SET"
-            }, FileAccess.ModeFlags.Read)
+        var rawInputData = FileAccess.Open(inputFile, FileAccess.ModeFlags.Read)
             .GetAsText();
         GD.Print(rawInputData);
 
