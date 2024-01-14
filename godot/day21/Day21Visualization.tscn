@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cstvfvcmm3wr6"]
+
+[ext_resource type="TileSet" uid="uid://cw6b7nk8hyy2l" path="res://day21/day21_tileset.tres" id="1_21id0"]
+
+[node name="Day21Visualization" type="Node2D"]
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource("1_21id0")
+format = 2
+layer_0/tile_data = PackedInt32Array(0, 65536, 0, 1, 65536, 0, 2, 65536, 0, 65538, 131072, 0, 65537, 131072, 0, 65536, 65536, 0, 131072, 65536, 0, 131073, 65536, 0, 131074, 262144, 0, 131075, 65536, 0, 131076, 65536, 0, 65539, 131072, 0, 3, 65536, 0, 65540, 65536, 0, 196612, 196608, 0, 196611, 65536, 0, 196610, 65536, 0, 196609, 65536, 0, 196608, 65536, 0, 4, 65536, 0)

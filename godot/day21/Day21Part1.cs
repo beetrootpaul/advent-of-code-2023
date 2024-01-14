@@ -21,6 +21,7 @@ internal partial class Day21Part1 : Node
     private Day21Hud? _hud;
 
     private Vector2I _size;
+    private Vector2I _start;
     private bool[][] _rocks;
 
     public override void _Ready()
@@ -36,8 +37,9 @@ internal partial class Day21Part1 : Node
             InputFile.Puzzle => "day21/puzzle1_in.txt",
             _ => "NOT_SET"
         });
+        GD.Print(_start);
 
-        // _hud?.SetText(rawInputData);
+        _hud?.SetText(_start.ToString());
     }
 
     private void Parse(string inputFile)
@@ -65,6 +67,10 @@ internal partial class Day21Part1 : Node
             for (var x = 0; x < _size.X; x++)
             {
                 _rocks[y][x] = inputLines[y][x] == '#';
+                if (inputLines[y][x] == 'S')
+                {
+                    _start = new Vector2I(x, y);
+                }
             }
         }
     }
