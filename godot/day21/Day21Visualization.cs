@@ -26,18 +26,20 @@ internal partial class Day21Visualization : Node2D
         return new Rect2I(tilesRect.Position * _tileSize, tilesRect.Size * _tileSize);
     }
 
-    internal void Visualize(bool[][] rocks, Vector2I start)
+    internal void Visualize(bool[][] rocks, Vector2I start, bool[][] reached)
     {
         _tileMap?.ClearLayer(0);
         for (var y = 0; y < rocks.Length; y++)
         {
             for (var x = 0; x < rocks[y].Length; x++)
             {
-                var tile = (x == start.X && y == start.Y)
-                    ? Tiles["start"]
-                    : rocks[y][x]
-                        ? Tiles["rock"]
-                        : Tiles["grass"];
+                var tile = reached[y][x]
+                    ? x == start.X && y == start.Y ? Tiles["start_final"] : Tiles["final"]
+                    : x == start.X && y == start.Y
+                        ? Tiles["start"]
+                        : rocks[y][x]
+                            ? Tiles["rock"]
+                            : Tiles["grass"];
                 _tileMap?.SetCell(0, new Vector2I(x, y), 0, tile);
             }
         }
