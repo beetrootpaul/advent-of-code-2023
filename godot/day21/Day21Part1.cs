@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 using FileAccess = Godot.FileAccess;
 
@@ -19,21 +20,53 @@ internal partial class Day21Part1 : Node
     [Export]
     private Day21Hud? _hud;
 
+    private Vector2I _size;
+    private bool[][] _rocks;
+
     public override void _Ready()
     {
-        Input.ParseInputEvent(new InputEventAction { Action = "cycle_debug_menu", Pressed = true });
+        Input.ParseInputEvent(new InputEventAction
+            { Action = "cycle_debug_menu", Pressed = true });
 
         _hud?.SetText("...");
 
-        var rawInputData = FileAccess.Open(_myInputFile switch
+        Parse(_myInputFile switch
         {
             InputFile.Example => "day21/example1_in.txt",
             InputFile.Puzzle => "day21/puzzle1_in.txt",
             _ => "NOT_SET"
-        }, FileAccess.ModeFlags.Read).GetAsText();
+        });
+
+        // _hud?.SetText(rawInputData);
+    }
+
+    private void Parse(string inputFile)
+    {
+        var rawInputData = FileAccess.Open(_myInputFile switch
+            {
+                InputFile.Example => "day21/example1_in.txt",
+                InputFile.Puzzle => "day21/puzzle1_in.txt",
+                _ => "NOT_SET"
+            }, FileAccess.ModeFlags.Read)
+            .GetAsText();
         GD.Print(rawInputData);
 
-        _hud?.SetText(rawInputData);
+        var inputLines = rawInputData
+            .Split('\n')
+            .Select(line => line.Trim())
+            .Where(line => line.Length > 0)
+            .ToList();
+        _size = new Vector2I(inputLines[0].Length, inputLines.Count);
+
+        _rocks = new bool[_size.Y][];
+        for (var y = 0; y < _size.Y; y++)
+        {
+            _rocks[y] = new bool[_size.X];
+            for (var x = 0; x < _size.X; x++)
+            {
+                _rocks[y][x] = inputLines[y][x] == '#';
+            }
+        }
     }
 
     internal enum InputFile
