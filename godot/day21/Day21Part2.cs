@@ -15,6 +15,9 @@ namespace AoC2023.Day21;
 //
 internal partial class Day21Part2 : Node
 {
+    private const float CameraZoomMultiplier = 3f;
+    private const float CameraMovementMultiplier = 0.5f;
+
     [ExportCategory("_ params _")]
     [Export]
     private InputFile _myInputFile;
@@ -77,10 +80,12 @@ internal partial class Day21Part2 : Node
             _mainCamera.AdjustZoomToContent(_visualization.GetRect());
         }
 
-        foreach (var _ in FindPositionsAfterSteps(steps))
+        foreach (var stepsLeft in FindPositionsAfterSteps(steps))
         {
+            GD.Print($"stepsLeft = {stepsLeft}");
+            _hud?.SetText($"stepsLeft\n{stepsLeft}");
+            _visualization?.Visualize(_rocks, _start, _visited);
             await Task.Delay(50);
-            _visualization?.Visualize(_rocks, _start, _reached);
         }
 
         _visualization?.Visualize(_rocks, _start, _reached);
@@ -89,6 +94,27 @@ internal partial class Day21Part2 : Node
             _reached.Select(row => row.Count(isTileReached => isTileReached)).Sum();
         GD.Print("reachedAmount: ", reachedAmount);
         _hud?.SetText($"RESULT\n{reachedAmount}");
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Input.IsKeyPressed(Key.X) && Input.IsKeyPressed(Key.Z))
+        {
+            // do nothing
+        }
+        else if (Input.IsKeyPressed(Key.X))
+        {
+            _mainCamera?.ZoomBy((float)delta * CameraZoomMultiplier);
+        }
+        else if (Input.IsKeyPressed(Key.Z))
+        {
+            _mainCamera?.ZoomBy(-(float)delta * CameraZoomMultiplier);
+        }
+
+        _mainCamera?.Move(new Vector2(
+            Input.GetAxis("ui_right", "ui_left"),
+            Input.GetAxis("ui_down", "ui_up")
+        ) * (float)delta * CameraMovementMultiplier);
     }
 
     private void Parse(string inputFile, int steps)
@@ -128,7 +154,7 @@ internal partial class Day21Part2 : Node
         }
     }
 
-    private IEnumerable FindPositionsAfterSteps(int steps)
+    private IEnumerable<int> FindPositionsAfterSteps(int steps)
     {
         var yieldCountdown = 0;
 
@@ -154,8 +180,6 @@ internal partial class Day21Part2 : Node
                         _visited[y][x] = false;
                     }
                 }
-
-                GD.Print("CLEARED");
             }
 
 
@@ -169,12 +193,11 @@ internal partial class Day21Part2 : Node
                 {
                     var next = position + direction;
                     if (
-                        next.X >= 0 && next.Y >= 0 && 
+                        next.X >= 0 && next.Y >= 0 &&
                         next.X < _size.X && next.Y < _size.Y &&
                         !_rocks[next.Y][next.X] &&
                         !_visited[next.Y][next.X])
                     {
-                        GD.Print($"enq: {next} {stepsLeft - 1}");
                         q.Enqueue((next, stepsLeft - 1));
                         _visited[next.Y][next.X] = true;
                     }
@@ -182,7 +205,7 @@ internal partial class Day21Part2 : Node
             }
 
             if (yieldCountdown++ < 500) continue;
-            yield return null;
+            yield return stepsLeft;
             yieldCountdown = 0;
         }
     }

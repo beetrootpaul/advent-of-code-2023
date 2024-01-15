@@ -22,12 +22,16 @@ internal partial class Day21MainCamera : Camera2D
         GD.Print("[MainCamera] aspect preserving zoom: ", aspectPreservingZoom);
         Zoom = aspectPreservingZoom;
 
+        Transform = Transform.Translated(contentRect.Size / 2);
+    }
 
-        Transform =
-            Transform.Translated(
-                contentRect.Position -
-                (viewportRect.Size / aspectPreservingZoom -
-                 contentRect.Size) / 2
-            );
+    internal void ZoomBy(float factor)
+    {
+        Zoom *= 1f + factor;
+    }
+
+    internal void Move(Vector2 factor)
+    {
+        Transform = Transform.Translated(GetViewportRect().Size / Zoom *  factor);
     }
 }

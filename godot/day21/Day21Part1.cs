@@ -15,6 +15,9 @@ namespace AoC2023.Day21;
 //
 internal partial class Day21Part1 : Node
 {
+    private const float CameraZoomMultiplier = 3f;
+    private const float CameraMovementMultiplier = 0.5f;
+
     [ExportCategory("_ params _")]
     [Export]
     private InputFile _myInputFile;
@@ -77,6 +80,27 @@ internal partial class Day21Part1 : Node
             _reached.Select(row => row.Count(isTileReached => isTileReached)).Sum();
         GD.Print("reachedAmount: ", reachedAmount);
         _hud?.SetText($"RESULT\n{reachedAmount}");
+    }
+
+    public override void _Process(double delta)
+    {
+        if (Input.IsKeyPressed(Key.X) && Input.IsKeyPressed(Key.Z))
+        {
+            // do nothing
+        }
+        else if (Input.IsKeyPressed(Key.X))
+        {
+            _mainCamera?.ZoomBy((float)delta * CameraZoomMultiplier);
+        }
+        else if (Input.IsKeyPressed(Key.Z))
+        {
+            _mainCamera?.ZoomBy(-(float)delta * CameraZoomMultiplier);
+        }
+
+        _mainCamera?.Move(new Vector2(
+            Input.GetAxis("ui_right", "ui_left"),
+            Input.GetAxis("ui_down", "ui_up")
+        ) * (float)delta * CameraMovementMultiplier);
     }
 
     private void Parse(string inputFile, int steps)
