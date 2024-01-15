@@ -11,9 +11,9 @@ namespace AoC2023.Day21;
 // Day 21: Step Counter
 // https://adventofcode.com/2023/day/21
 //
-// part 1
+// part 2
 //
-internal partial class Day21Part1 : Node
+internal partial class Day21Part2 : Node
 {
     [ExportCategory("_ params _")]
     [Export]
@@ -33,20 +33,32 @@ internal partial class Day21Part1 : Node
     private Vector2I _start;
     private bool[][] _rocks;
     private bool[][] _reached;
-    private bool[][][] _processed;
+    private bool[][] _visited;
 
     public override async void _Ready()
     {
         var inputFile = _myInputFile switch
         {
-            InputFile.Example => "day21/example1_in.txt",
+            InputFile.Example6 => "day21/example1_in.txt",
+            InputFile.Example10 => "day21/example1_in.txt",
+            InputFile.Example50 => "day21/example1_in.txt",
+            InputFile.Example100 => "day21/example1_in.txt",
+            InputFile.Example500 => "day21/example1_in.txt",
+            InputFile.Example1000 => "day21/example1_in.txt",
+            InputFile.Example5000 => "day21/example1_in.txt",
             InputFile.Puzzle => "day21/puzzle1_in.txt",
             _ => "NOT_SET"
         };
         var steps = _myInputFile switch
         {
-            InputFile.Example => 6,
-            InputFile.Puzzle => 64,
+            InputFile.Example6 => 6,
+            InputFile.Example10 => 10,
+            InputFile.Example50 => 50,
+            InputFile.Example100 => 100,
+            InputFile.Example500 => 500,
+            InputFile.Example1000 => 1000,
+            InputFile.Example5000 => 5000,
+            InputFile.Puzzle => 26501365,
             _ => 1
         };
 
@@ -94,29 +106,19 @@ internal partial class Day21Part1 : Node
 
         _rocks = new bool[_size.Y][];
         _reached = new bool[_size.Y][];
-        _processed = new bool[steps + 1][][];
-        for (var s = 0; s <= steps; s++)
-        {
-            _processed[s] = new bool[_size.Y][];
-        }
+        _visited = new bool[_size.Y][];
 
         for (var y = 0; y < _size.Y; y++)
         {
             _rocks[y] = new bool[_size.X];
             _reached[y] = new bool[_size.X];
-            for (var s = 0; s <= steps; s++)
-            {
-                _processed[s][y] = new bool[_size.X];
-            }
+            _visited[y] = new bool[_size.X];
 
             for (var x = 0; x < _size.X; x++)
             {
                 _rocks[y][x] = inputLines[y][x] == '#';
                 _reached[y][x] = false;
-                for (var s = 0; s <= steps; s++)
-                {
-                    _processed[s][y][x] = false;
-                }
+                _visited[y][x] = false;
 
                 if (inputLines[y][x] == 'S')
                 {
@@ -133,12 +135,28 @@ internal partial class Day21Part1 : Node
         var directions = new List<Vector2I>
             { Vector2I.Right, Vector2I.Down, Vector2I.Left, Vector2I.Up };
 
-        Stack<(Vector2I position, int stepsLeft)> s = new();
-        s.Push((_start, steps));
+        Queue<(Vector2I position, int stepsLeft)> q = new();
+        q.Enqueue((_start, steps));
+        _visited[_start.Y][_start.X] = true;
 
-        while (s.Count > 0)
+        var prevStepsLeft = steps;
+        while (q.Count > 0)
         {
-            var (position, stepsLeft) = s.Pop();
+            var (position, stepsLeft) = q.Dequeue();
+
+            if (stepsLeft < prevStepsLeft)
+            {
+                prevStepsLeft = stepsLeft;
+                for (var y = 0; y < _size.Y; y++)
+                {
+                    for (var x = 0; x < _size.X; x++)
+                    {
+                        _visited[y][x] = false;
+                    }
+                }
+
+                GD.Print("CLEARED");
+            }
 
 
             if (stepsLeft <= 0)
@@ -150,17 +168,18 @@ internal partial class Day21Part1 : Node
                 foreach (var direction in directions)
                 {
                     var next = position + direction;
-                    if (next.X >= 0 && next.Y >= 0 &&
+                    if (
+                        next.X >= 0 && next.Y >= 0 && 
                         next.X < _size.X && next.Y < _size.Y &&
                         !_rocks[next.Y][next.X] &&
-                        !_processed[stepsLeft - 1][next.Y][next.X])
+                        !_visited[next.Y][next.X])
                     {
-                        s.Push((next, stepsLeft - 1));
+                        GD.Print($"enq: {next} {stepsLeft - 1}");
+                        q.Enqueue((next, stepsLeft - 1));
+                        _visited[next.Y][next.X] = true;
                     }
                 }
             }
-
-            _processed[stepsLeft][position.Y][position.X] = true;
 
             if (yieldCountdown++ < 500) continue;
             yield return null;
@@ -170,7 +189,13 @@ internal partial class Day21Part1 : Node
 
     internal enum InputFile
     {
-        Example,
+        Example6,
+        Example10,
+        Example50,
+        Example100,
+        Example500,
+        Example1000,
+        Example5000,
         Puzzle
     }
 }

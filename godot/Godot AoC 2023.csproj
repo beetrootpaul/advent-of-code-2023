@@ -11,7 +11,23 @@
   <ItemGroup>
     <Content Include="day21\example1_in.txt" />
     <Content Include="day21\example1_out.txt" />
+    <Content Include="day21\example2_1000_in.txt" />
+    <Content Include="day21\example2_1000_out.txt" />
+    <Content Include="day21\example2_100_in.txt" />
+    <Content Include="day21\example2_100_out.txt" />
+    <Content Include="day21\example2_10_in.txt" />
+    <Content Include="day21\example2_10_out.txt" />
+    <Content Include="day21\example2_5000_in.txt" />
+    <Content Include="day21\example2_5000_out.txt" />
+    <Content Include="day21\example2_500_in.txt" />
+    <Content Include="day21\example2_500_out.txt" />
+    <Content Include="day21\example2_50_in.txt" />
+    <Content Include="day21\example2_50_out.txt" />
+    <Content Include="day21\example2_6_in.txt" />
+    <Content Include="day21\example2_6_out.txt" />
     <Content Include="day21\puzzle1_in.txt" />
     <Content Include="day21\puzzle1_out.txt" />
+    <Content Include="day21\puzzle2_in.txt" />
+    <Content Include="day21\puzzle2_out.txt" />
   </ItemGroup>
 </Project>
