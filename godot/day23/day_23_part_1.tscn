@@ -4,7 +4,6 @@
 [ext_resource type="TileSet" uid="uid://wyagpwk3w2ve" path="res://day23/tileset.tres" id="2_q8urt"]
 
 [sub_resource type="Theme" id="Theme_g0eul"]
-default_font_size = 64
 
 [node name="day_23_part_1" type="Node2D" node_paths=PackedStringArray("tilemap", "result_text")]
 script = ExtResource("1_lgqmo")
@@ -12,7 +11,6 @@ tilemap = NodePath("TileMap")
 result_text = NodePath("Camera2D/RESULT_text")
 
 [node name="TileMap" type="TileMap" parent="."]
-scale = Vector2(4, 4)
 tile_set = ExtResource("2_q8urt")
 format = 2
 layer_0/name = "bg"
@@ -26,10 +24,10 @@ anchor_mode = 0
 
 [node name="RESULT_text" type="Label" parent="Camera2D"]
 z_index = 10
-offset_left = 49.0
-offset_top = 47.0
-offset_right = 534.0
-offset_bottom = 135.0
+offset_left = 10.0
+offset_top = 12.0
+offset_right = 464.0
+offset_bottom = 100.0
 size_flags_vertical = 1
 theme = SubResource("Theme_g0eul")
 text = "[ Day 16 Part 1 ]"

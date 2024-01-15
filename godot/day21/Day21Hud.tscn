@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://5m3rjot77ec"]
+
+[ext_resource type="Script" path="res://day21/Day21Hud.cs" id="1_8fgiw"]
+[ext_resource type="FontFile" uid="uid://de6g30uf8a1nr" path="res://day21/monof55.ttf" id="2_snwfq"]
+
+[node name="Day21Hud" type="CanvasLayer" node_paths=PackedStringArray("_label")]
+script = ExtResource("1_8fgiw")
+_label = NodePath("Label")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_snwfq")
+text = "text will go here ...
+2nd line will go here ..."

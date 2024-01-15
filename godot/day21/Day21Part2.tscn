@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://cs728hkkwi7sh"]
+
+[ext_resource type="Script" path="res://day21/Day21Part2.cs" id="1_3nrgt"]
+[ext_resource type="PackedScene" uid="uid://5m3rjot77ec" path="res://day21/Day21Hud.tscn" id="2_iwrtk"]
+[ext_resource type="PackedScene" uid="uid://cstvfvcmm3wr6" path="res://day21/Day21Visualization.tscn" id="3_0nkvr"]
+[ext_resource type="Script" path="res://day21/Day21MainCamera.cs" id="4_gkkdo"]
+
+[node name="Day21Part2" type="Node" node_paths=PackedStringArray("_hud", "_visualization", "_mainCamera")]
+script = ExtResource("1_3nrgt")
+_myInputFile = 2
+_hud = NodePath("Hud")
+_visualization = NodePath("Visualization")
+_mainCamera = NodePath("MainCamera")
+
+[node name="Hud" parent="." instance=ExtResource("2_iwrtk")]
+
+[node name="Visualization" parent="." instance=ExtResource("3_0nkvr")]
+
+[node name="MainCamera" type="Camera2D" parent="."]
+script = ExtResource("4_gkkdo")
