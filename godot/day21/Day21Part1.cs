@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Godot;
 using FileAccess = Godot.FileAccess;
 
@@ -32,7 +34,7 @@ internal partial class Day21Part1 : Node
     private bool[][] _rocks;
     private bool[][] _reached;
 
-    public override void _Ready()
+    public override async void _Ready()
     {
         Input.ParseInputEvent(new InputEventAction
             { Action = "cycle_debug_menu", Pressed = true });
@@ -54,12 +56,17 @@ internal partial class Day21Part1 : Node
             _mainCamera.AdjustZoomToContent(_visualization.GetRect());
         }
 
-        FindPositionsAfterSteps(_myInputFile switch
+        foreach (var _ in FindPositionsAfterSteps(_myInputFile switch
+                 {
+                     InputFile.Example => 6,
+                     InputFile.Puzzle => 64,
+                     _ => 1
+                 }))
         {
-            InputFile.Example => 6,
-            InputFile.Puzzle => 64,
-            _ => 1
-        });
+            GD.Print("step");
+            await Task.Delay(50);
+            _visualization?.Visualize(_rocks, _start, _reached);
+        }
 
         _visualization?.Visualize(_rocks, _start, _reached);
 
@@ -100,8 +107,10 @@ internal partial class Day21Part1 : Node
         }
     }
 
-    private void FindPositionsAfterSteps(int steps)
+    private IEnumerable FindPositionsAfterSteps(int steps)
     {
+        var yieldCountdown = 0;
+        
         var directions = new List<Vector2I>
             { Vector2I.Right, Vector2I.Down, Vector2I.Left, Vector2I.Up };
 
@@ -124,7 +133,12 @@ internal partial class Day21Part1 : Node
                 {
                     s.Push((next, stepsLeft - 1));
                 }
+                
             }
+
+            if (yieldCountdown++ < 50) continue;
+            yield return null;
+            yieldCountdown = 0;
         }
     }
 
