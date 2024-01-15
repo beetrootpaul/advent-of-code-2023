@@ -7,7 +7,7 @@
 
 [node name="Day21Part2" type="Node" node_paths=PackedStringArray("_hud", "_visualization", "_mainCamera")]
 script = ExtResource("1_3nrgt")
-_myInputFile = 6
+_myInputFile = 2
 _hud = NodePath("Hud")
 _visualization = NodePath("Visualization")
 _mainCamera = NodePath("MainCamera")

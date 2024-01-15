@@ -182,7 +182,6 @@ internal partial class Day21Part2 : Node
                 }
             }
 
-
             if (stepsLeft <= 0)
             {
                 _reached[position.Y][position.X] = true;
@@ -191,10 +190,8 @@ internal partial class Day21Part2 : Node
             {
                 foreach (var direction in directions)
                 {
-                    var next = position + direction;
+                    var next = (position + direction + _size) % _size;
                     if (
-                        next.X >= 0 && next.Y >= 0 &&
-                        next.X < _size.X && next.Y < _size.Y &&
                         !_rocks[next.Y][next.X] &&
                         !_visited[next.Y][next.X])
                     {
